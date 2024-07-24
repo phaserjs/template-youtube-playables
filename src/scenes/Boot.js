@@ -18,25 +18,47 @@ export class Boot extends Scene
 
     async create ()
     {
+        //  This will load our saved cloud data from the Playables API.
+
+        //  We use the withTimeout wrapper to ensure that the loadData call doesn't hang indefinitely
+        //  (which can happen often in the Test Suite if you're using a hot-reloaded setup)
+
         try
         {
-            console.log('Loading ....');
+            const data = await YouTubePlayables.withTimeout(YouTubePlayables.loadData(), 1000);
 
-            const [language, data] = await Promise.all([
-                YouTubePlayables.loadLanguage(),
-                YouTubePlayables.loadData()
-            ]);
-    
-            console.log('Language:', language);
-            console.log('Data:', data);
+            //  You can also call: ytgame.game.loadData()
 
-            this.scene.start('Preloader');
+            //  'data' will contain the parsed JSON data from the Playables loadData call.
+            //  You can now store it into the Phaser Registry, or elsewhere.
+            //  Or it will be null/undefined if no data was present.
+
+            console.log('loadData() result', data);
         }
         catch (error)
         {
-            console.error('An error occurred:', error);
-
-            this.scene.start('Preloader');
+            console.error(error);
         }
+
+        //  We are now going to define our game pause and resume handlers.
+        //  This is going to pause the entire Phaser game when the YouTube Playables API tells us to.
+
+        YouTubePlayables.setOnPause(() => {
+
+            console.log('YouTube Playables API has requested game pause');
+
+            this.game.pause();
+
+        });
+
+        YouTubePlayables.setOnResume(() => {
+
+            console.log('YouTube Playables API has requested game resume');
+
+            this.game.resume();
+
+        });
+
+        this.scene.start('Preloader');
     }
 }

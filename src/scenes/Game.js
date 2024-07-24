@@ -1,4 +1,6 @@
+import { ScaleFlow } from '../core/ScaleFlow';
 import { Scene } from 'phaser';
+import { YouTubePlayables } from '../YouTubePlayables';
 
 export class Game extends Scene
 {
@@ -7,22 +9,34 @@ export class Game extends Scene
         super('Game');
     }
 
+    init ()
+    {
+        ScaleFlow.addCamera(this.cameras.main);
+
+        this.events.on('shutdown', this.shutdown, this);
+    }
+
     create ()
     {
-        this.cameras.main.setBackgroundColor(0x00ff00);
+        this.scene.launch('GameBackground');
+        this.scene.bringToTop();
+        this.scene.launch('Debug');
 
-        this.add.image(512, 384, 'background').setAlpha(0.5);
+        const cx = ScaleFlow.center.x;
+        const cy = ScaleFlow.center.y;
 
-        this.add.text(512, 384, 'Make something fun!\nand share it with us:\nsupport@phaser.io', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5);
+        const basklet = this.add.image(cx, 80, 'basket').setOrigin(0.5, 0);
 
-        this.input.once('pointerdown', () => {
+        const hoop = this.add.image(cx, 238, 'hoop').setOrigin(0.5, 0).setDepth(10);
 
-            this.scene.start('GameOver');
+        const ball = this.add.image(cx, 230, 'ball');
 
-        });
+
+
+    }
+
+    shutdown ()
+    {
+        ScaleFlow.removeCamera(this.cameras.main);
     }
 }

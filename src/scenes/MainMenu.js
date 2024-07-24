@@ -23,7 +23,8 @@ export class MainMenu extends Scene
 
         this.input.once('pointerdown', () => {
 
-            // this.scene.start('Game');
+            this.scene.stop('Background');
+            this.scene.start('Game');
 
         });
 
@@ -34,7 +35,10 @@ export class MainMenu extends Scene
         //  You can also do this by calling:
         // ytgame?.game.gameReady();
 
-        // this.scene.launch('Debug');
+        //  Launch our animated background Scene
+        this.scene.launch('Background');
+
+        //  Launch our UI Scene
         this.scene.launch('UI');
     }
 
@@ -55,11 +59,7 @@ export class MainMenu extends Scene
         const cx = ScaleFlow.center.x;
         const cy = ScaleFlow.center.y;
 
-        console.log('createtext', performance.now());
-
-        const language = await YouTubePlayables.getLanguage();
-
-        console.log('createtext after wait', performance.now());
+        const language = await YouTubePlayables.loadLanguage();
 
         const info = [
             `YouTube SDK: ${YouTubePlayables.version}`,

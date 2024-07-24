@@ -36,11 +36,9 @@ export class ScaleFlow
         this.parent = this.canvas.parentElement;
         this.guide = document.getElementById('guide');
 
-        // InitXSprite();
-
         // Force a resize event to set the initial size of the game. The time value doesn’t matter,
         // we’re just giving it a tick to make sure the canvas parent bounds have been set.
-        window.setTimeout(() => this.onResizeHandler(), 16);
+        window.setTimeout(() => this.onResizeHandler(), 1);
     }
 
     onResizeHandler ()

@@ -30,6 +30,8 @@ export class Debug extends Scene
         this.gameZoneRight = this.add.rectangle(0, 0, size, size, color).setAlpha(alpha);
         this.gameZoneTop = this.add.rectangle(0, 0, size, size, color).setAlpha(alpha);
         this.gameZoneBottom = this.add.rectangle(0, 0, size, size, color).setAlpha(alpha);
+
+        this.scene.bringToTop();
     }
 
     update ()

@@ -20,8 +20,6 @@ export class UI extends Phaser.Scene
 
     create ()
     {
-        console.log('UI Create');
-
         this.audioIcon = this.add.sprite(0, 0, 'audioOff');
 
         this.gridSnap.addSprite(this.audioIcon, GridSnap.TOP_RIGHT);

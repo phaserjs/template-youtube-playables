@@ -1,10 +1,3 @@
-const ytgameRef = window.ytgame ?? window.parent?.ytgame;
-
-let _firstFrameReady = false;
-let _gameReady = false;
-let _unsetAudioCallback = undefined;
-let _language = '';
-
 export const SDKErrorType = Object.freeze({
     UNKNOWN: 'UNKNOWN',
     API_UNAVAILABLE: 'API_UNAVAILABLE',
@@ -12,98 +5,134 @@ export const SDKErrorType = Object.freeze({
     SIZE_LIMIT_EXCEEDED: 'SIZE_LIMIT_EXCEEDED'
 });
 
-const handleError = (errorType) =>
-{
-    let type = null;
-
-    switch (errorType)
-    {
-        case SDKErrorType.UNKNOWN:
-            console.error('The error is unknown.');
-            type = SDKErrorType.UNKNOWN;
-            break;
-        case SDKErrorType.API_UNAVAILABLE:
-            console.error('The API is temporarily unavailable. Please try again later.');
-            type = SDKErrorType.API_UNAVAILABLE;
-            break;
-        case SDKErrorType.INVALID_PARAMS:
-            console.error('The API was called with invalid parameters.');
-            type = SDKErrorType.INVALID_PARAMS;
-            break;
-        case SDKErrorType.SIZE_LIMIT_EXCEEDED:
-            console.error('The API was called with parameters exceeding the size limit.');
-            type = SDKErrorType.SIZE_LIMIT_EXCEEDED;
-            break;
-        default:
-            console.error('Unhandled error type.');
-    }
-
-    return type;
-};
-
 export const YouTubePlayables = {
 
-    isLoaded: !!ytgameRef,
-
     //  https://developers.google.com/youtube/gaming/playables/reference/sdk#sdk_version
-    version: ytgameRef?.SDK_VERSION ?? 'unloaded',
+    version: 'unloaded',
 
     //  https://developers.google.com/youtube/gaming/playables/reference/sdk#in_playables_env
-    inPlayablesEnv: ytgameRef?.IN_PLAYABLES_ENV,
+    inPlayablesEnv: false,
+
+    _ytgameRef: null,
+    _firstFrameReady: false,
+    _gameReady: false,
+    _unsetAudioCallback: undefined,
+    _language: 'unavailable',
+    _data: null,
+
+    boot: function (loadedCallback)
+    {
+        const callback = () => {
+
+            if (window.ytgame)
+            {
+                this._ytgameRef = window.ytgame;
+                this.version = this._ytgameRef.SDK_VERSION;
+                this.inPlayablesEnv = this._ytgameRef.IN_PLAYABLES_ENV;
+            }
+            else
+            {
+                console.error('YouTube Playables SDK is not available.');
+            }
+
+            loadedCallback();
+
+        };
+
+        if (document.readyState === 'complete' || document.readyState === 'interactive')
+        {
+            callback();
+    
+            return;
+        }
+    
+        const check = () =>
+        {
+            document.removeEventListener('DOMContentLoaded', check, true);
+            window.removeEventListener('load', check, true);
+    
+            callback();
+        };
+    
+        if (!document.body)
+        {
+            window.setTimeout(check, 20);
+        }
+        else
+        {
+            document.addEventListener('DOMContentLoaded', check, true);
+            window.addEventListener('load', check, true);
+        }
+    },
     
     firstFrameReady: function ()
     {
-        if (_firstFrameReady)
+        if (!this.isLoaded() || this._firstFrameReady)
         {
             return;
         }
         else
         {
-            ytgameRef?.game.firstFrameReady();
+            this._ytgameRef.game.firstFrameReady();
 
-            _firstFrameReady = true;
+            this._firstFrameReady = true;
         }
     },
 
     gameReady: function ()
     {
-        if (!_firstFrameReady)
+        if (!this.isLoaded() || this._gameReady)
         {
-            console.error('gameReady called before firstFrameReady.');
+            return;
+        }
+
+        if (!this._firstFrameReady)
+        {
+            console.error('gameReady called before firstFrameReady');
 
             return;
         }
         else
         {
-            ytgameRef?.game.gameReady();
+            this._ytgameRef.game.gameReady();
 
-            _gameReady = true;
+            this._gameReady = true;
         }
     },
 
     isFirstFrameReady: function ()
     {
-        return _firstFrameReady;
+        return this._firstFrameReady;
     },
 
     isGameReady: function ()
     {
-        return _gameReady;
+        return this._gameReady;
+    },
+
+    isLoaded: function ()
+    {
+        return (this._ytgameRef && this.inPlayablesEnv);
+    },
+
+    isReady: function ()
+    {
+        return (this.isLoaded() && this._firstFrameReady && this._gameReady);
     },
 
     sendScore: function (score)
     {
-        if (_gameReady && _inEnv)
+        if (this.isReady())
         {
             try
             {
-                ytgameRef?.engagement.sendScore({ value: score });
+                this._ytgameRef?.engagement.sendScore({ value: score });
             }
             catch (error)
             {
                 if (error.errorType)
                 {
-                    handleError(error.errorType);
+                    this.handleError(error.errorType);
                 }
             }
         }
@@ -111,93 +140,193 @@ export const YouTubePlayables = {
 
     setOnPause: function (callback)
     {
-        if (ytgameRef?.IN_PLAYABLES_ENV)
+        if (this.isLoaded())
         {
-            ytgameRef?.system.onPause(callback);
+            this._ytgameRef.system.onPause(callback);
         }
     },
 
     setOnResume: function (callback)
     {
-        if (ytgameRef?.IN_PLAYABLES_ENV)
+        if (this.isLoaded())
         {
-            ytgameRef?.system.onResume(callback);
+            this._ytgameRef.system.onResume(callback);
         }
     },
 
     loadData: function ()
     {
-        return new Promise(async (resolve, reject) =>
+        return new Promise((resolve, reject) =>
         {
-            let data = null;
-    
-            if (ytgameRef?.IN_PLAYABLES_ENV)
+            if (this.isLoaded())
             {
-                try
-                {
-                    const rawdata = await ytgameRef?.game.loadData();
-    
+                this._ytgameRef.game.loadData().then(rawdata => {
+
                     if (rawdata)
                     {
-                        data = JSON.parse(rawdata);
-                    }
-                }
-                catch (error)
-                {
-                    console.error('Failed to parse data.');
+                        try
+                        {
+                            const data = JSON.parse(rawdata);
 
-                    ytgameRef?.health.logError();
+                            this._data = data;
+
+                            resolve(data);
+                        }
+                        catch (error)
+                        {
+                            console.error('Failed to parse loadData');
+        
+                            this.logError();
+        
+                            reject(error);
+                        }
+                    }
+                    else
+                    {
+                        resolve();
+                    }
+
+                }).catch(error => {
+
+                    console.error('Failed to loadData');
+        
+                    if (error.errorType)
+                    {
+                        this.handleError(error.errorType);
+                    }
+
+                    this.logError();
 
                     reject(error);
-                }
+            
+                });
+            }
+            else
+            {
+                resolve();
             }
             
-            resolve(data);
         });
+    },
+
+    getData: function ()
+    {
+        return this._data;
     },
     
     loadLanguage: function ()
     {
-        return new Promise(async (resolve) =>
+        return new Promise((resolve, reject) =>
         {
-            if (ytgameRef?.IN_PLAYABLES_ENV)
+            if (this.isLoaded())
             {
-                _language = await ytgameRef?.system.getLanguage();
+                this._ytgameRef.system.getLanguage().then(language => {
+
+                    this._language = language;
+
+                    resolve(language);
+
+                }).catch(error => {
+
+                    console.error('Failed to getLanguage');
+        
+                    this.logError();
+
+                    reject(error);
+        
+                });
             }
-    
-            resolve(_language);
+            else
+            {
+                resolve(this._language);
+            }
         });
     },
     
     getLanguage: function ()
     {
-        return _language;
+        return this._language;
     },
 
     isAudioEnabled: function ()
     {
-        return ytgameRef?.system.isAudioEnabled() ?? false;
+        return (this.isLoaded() && this._ytgameRef.system.isAudioEnabled()) ?? false;
     },
 
     setAudioChangeCallback: function (callback)
     {
-        if (ytgameRef?.IN_PLAYABLES_ENV)
+        if (this.isLoaded())
         {
-            if (_unsetAudioCallback)
+            if (this._unsetAudioCallback)
             {
-                _unsetAudioCallback();
+                this._unsetAudioCallback();
             }
 
-            _unsetAudioCallback = ytgameRef?.system.onAudioEnabledChange(callback);
+            this._unsetAudioCallback = this._ytgameRef.system.onAudioEnabledChange(callback);
         }
     },
 
     unsetAudioChangeCallback: function ()
     {
-        if (_unsetAudioCallback)
+        if (this.__unsetAudioCallback)
         {
-            _unsetAudioCallback();
+            this._unsetAudioCallback();
+
+            this._unsetAudioCallback = undefined;
         }
+    },
+
+    handleError: function (errorType)
+    {
+        let type = null;
+    
+        switch (errorType)
+        {
+            case SDKErrorType.UNKNOWN:
+                console.error('The error is unknown.');
+                type = SDKErrorType.UNKNOWN;
+                break;
+            case SDKErrorType.API_UNAVAILABLE:
+                console.error('The API is temporarily unavailable. Please try again later.');
+                type = SDKErrorType.API_UNAVAILABLE;
+                break;
+            case SDKErrorType.INVALID_PARAMS:
+                console.error('The API was called with invalid parameters.');
+                type = SDKErrorType.INVALID_PARAMS;
+                break;
+            case SDKErrorType.SIZE_LIMIT_EXCEEDED:
+                console.error('The API was called with parameters exceeding the size limit.');
+                type = SDKErrorType.SIZE_LIMIT_EXCEEDED;
+                break;
+            default:
+                console.error('Unhandled error type.');
+        }
+    
+        return type;
+    },
+    
+    withTimeout: function (promise, timeout = 2000)
+    {
+        return new Promise((resolve, reject) => 
+        {
+            const timer = setTimeout(() => 
+            {
+                reject(new Error('Operation timed out'));
+            }, timeout);
+
+            promise
+                .then(value => 
+                {
+                    clearTimeout(timer);
+                    resolve(value);
+                })
+                .catch(err => 
+                {
+                    clearTimeout(timer);
+                    reject(err);
+                });
+        });
     }
+
 };
 

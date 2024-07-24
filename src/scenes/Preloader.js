@@ -29,15 +29,17 @@ export class Preloader extends Scene
         this.load.image('tile', 'tile.png');
         this.load.image('audioOff', 'audio-off.png');
         this.load.image('audioOn', 'audio-on.png');
+
+        this.load.image('gameBackground', 'game-background.png');
+        this.load.image('basket', 'basket.png');
+        this.load.image('hoop', 'hoop.png');
+        this.load.image('ball', 'ball.png');
     }
 
     create ()
     {
         //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
         //  For example, you can define global animations here, so we can use them in other scenes.
-
-        //  Launch our animated background Scene
-        this.scene.launch('Background');
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         this.scene.start('MainMenu');
