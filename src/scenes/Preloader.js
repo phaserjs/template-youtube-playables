@@ -34,6 +34,8 @@ export class Preloader extends Scene
         this.load.image('basket', 'basket.png');
         this.load.image('hoop', 'hoop.png');
         this.load.image('ball', 'ball.png');
+        this.load.image('swish', 'swish.png');
+        this.load.image('hand', 'hand2.png');
     }
 
     create ()

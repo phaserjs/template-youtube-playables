@@ -20,17 +20,19 @@ export class Game extends Scene
     {
         this.scene.launch('GameBackground');
         this.scene.bringToTop();
-        this.scene.launch('Debug');
+        // this.scene.launch('Debug');
 
         const cx = ScaleFlow.center.x;
         const cy = ScaleFlow.center.y;
 
-        const basklet = this.add.image(cx, 80, 'basket').setOrigin(0.5, 0);
+        const basket = this.add.image(cx, 80+90, 'basket').setOrigin(0.5, 0);
 
-        const hoop = this.add.image(cx, 238, 'hoop').setOrigin(0.5, 0).setDepth(10);
+        const hoop = this.add.image(cx, 238+90, 'hoop').setOrigin(0.5, 0).setDepth(10);
 
-        const ball = this.add.image(cx, 230, 'ball');
+        const ball = this.add.image(cx-8, 230+90, 'ball');
 
+        this.add.image(cx, 0, 'swish');
+        this.add.image(cx, 1100, 'hand');
 
 
     }
