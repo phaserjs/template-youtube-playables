@@ -3,11 +3,6 @@ import { Scene } from 'phaser';
 
 export class Debug extends Scene
 {
-    gameZoneLeft;
-    gameZoneRight;
-    gameZoneTop;
-    gameZoneBottom;
-
     constructor ()
     {
         super('Debug');
@@ -22,9 +17,9 @@ export class Debug extends Scene
 
     create ()
     {
-        const color = 0x00ff00;
-        const alpha = 0.85;
-        const size = 16;
+        let color = 0x00ff00;
+        let alpha = 0.85;
+        let size = 16;
 
         this.gameZoneLeft = this.add.rectangle(0, 0, size, size, color).setAlpha(alpha);
         this.gameZoneRight = this.add.rectangle(0, 0, size, size, color).setAlpha(alpha);
@@ -36,12 +31,12 @@ export class Debug extends Scene
 
     update ()
     {
-        const gz = ScaleFlow.gameZone;
+        const vz = ScaleFlow.visibleZone;
 
-        this.gameZoneLeft.setPosition(gz.left, gz.centerY);
-        this.gameZoneRight.setPosition(gz.right, gz.centerY);
-        this.gameZoneTop.setPosition(gz.centerX, gz.top);
-        this.gameZoneBottom.setPosition(gz.centerX, gz.bottom);
+        this.gameZoneLeft.setPosition(vz.left, vz.centerY);
+        this.gameZoneRight.setPosition(vz.right, vz.centerY);
+        this.gameZoneTop.setPosition(vz.centerX, vz.top);
+        this.gameZoneBottom.setPosition(vz.centerX, vz.bottom);
     }
 
     shutdown ()
