@@ -24,6 +24,15 @@ YouTubePlayables.boot(() => {
         height: 1180,
         parent: 'gameParent',
         backgroundColor: '#000000',
+        physics: {
+            default: 'matter',
+            matter: {
+                gravity: {
+                    y: 0.8
+                },
+                debug: true
+            }
+        },
         scene: [
             Boot,
             Debug,
