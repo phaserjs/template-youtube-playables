@@ -15,6 +15,7 @@ export class ScaleFlow
 
         ScaleFlow.gameZone = new Phaser.Geom.Rectangle(0, 0, width, height);
         ScaleFlow.uiZone = new Phaser.Geom.Rectangle(0, 0, width, height);
+        ScaleFlow.visibleZone = new Phaser.Geom.Rectangle(0, 0, width, height);
 
         ScaleFlow.sprites = new Set();
         ScaleFlow.cameras = new Set();
@@ -24,6 +25,8 @@ export class ScaleFlow
         };
 
         this.game = new Phaser.Game(config);
+
+        window['ScaleFlow'] = this;
     }
 
     gameBootHandler ()
@@ -83,6 +86,12 @@ export class ScaleFlow
 
         ScaleFlow.sprites.forEach(sprite => sprite.onResize());
 
+        //  Switch for landscape or portrait
+        ScaleFlow.visibleZone.left = -(guideBounds.x);
+        ScaleFlow.visibleZone.right = ScaleFlow.gameZone.width + guideBounds.x;
+        // ScaleFlow.visibleZone.top = topBounds;
+        // ScaleFlow.visibleZone.bottom = bottomBounds;
+
         this.game.events.emit(ScaleFlow.RESIZE);
     }
 
@@ -106,6 +115,26 @@ export class ScaleFlow
     static removeSprite (sprite)
     {
         this.sprites.delete(sprite);
+    }
+
+    static getLeft ()
+    {
+        return ScaleFlow.visibleZone.left;
+    }
+
+    static getRight ()
+    {
+        return ScaleFlow.visibleZone.right;
+    }
+
+    static getTop ()
+    {
+        return ScaleFlow.visibleZone.top;
+    }
+
+    static getBottom ()
+    {
+        return ScaleFlow.visibleZone.bottom;
     }
 
     static getX (x)
