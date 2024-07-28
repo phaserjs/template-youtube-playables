@@ -28,7 +28,7 @@ YouTubePlayables.boot(() => {
             default: 'matter',
             matter: {
                 gravity: {
-                    y: 0.8
+                    y: 1.0
                 },
                 debug: true
             }
