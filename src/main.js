@@ -30,7 +30,7 @@ YouTubePlayables.boot(() => {
                 gravity: {
                     y: 1.0
                 },
-                debug: true
+                debug: false
             }
         },
         scene: [
