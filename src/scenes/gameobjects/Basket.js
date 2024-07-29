@@ -76,15 +76,15 @@ export class Basket
         };
 
         const constraintOptions = {
-            stiffness: 0.06
+            stiffness: 0.05
         };
 
         this.net = this.matter.add.softBody(
             this.body.position.x - 60,
             this.body.position.y,
             7, 5,
-            1, 0,
-            false, 8,
+            0, 0,
+            false, 5,
             particleOptions, constraintOptions
         );
 
