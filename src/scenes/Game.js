@@ -24,7 +24,10 @@ export class Game extends Scene
         this.scene.bringToTop();
         this.scene.launch('Debug');
 
-        this.basket = new Basket(this);
+        const x = ScaleFlow.center.x;
+        const y = ScaleFlow.getTop();
+
+        this.basket = new Basket(this, x, y + 64);
 
         this.ballCollisionCategory = this.matter.world.nextCategory();
 

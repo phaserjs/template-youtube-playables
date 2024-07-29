@@ -2,22 +2,17 @@ import { ScaleFlow } from '../../core/ScaleFlow';
 
 export class Basket
 {
-    constructor (scene)
+    constructor (scene, x, y)
     {
         this.scene = scene;
         this.matter = scene.matter;
         this.active = true;
 
-        this.speed = 3;
+        this.position = new Phaser.Math.Vector2(x, y);
 
-        const cx = ScaleFlow.center.x;
-        const top = ScaleFlow.getTop();
-
-        this.position = new Phaser.Math.Vector2(cx, top + 64);
-
-        this.basket = scene.add.image(cx, top + 64, 'basket').setOrigin(0.5, 0);
+        this.basket = scene.add.image(0, 0, 'basket').setOrigin(0.5, 0);
         this.netGraphic = scene.add.graphics().setDepth(9);
-        this.hoop = scene.add.image(cx, top + 223, 'hoop').setOrigin(0.5, 0).setDepth(10);
+        this.hoop = scene.add.image(0, 0, 'hoop').setOrigin(0.5, 0).setDepth(10);
 
         const leftBumper = this.matter.bodies.rectangle(-60, 52, 16, 54, { label: 'left', chamfer: { radius: [ 0, 8, 8, 0 ] } });
         const rightBumper = this.matter.bodies.rectangle(60, 52, 16, 54, { label: 'right', chamfer: { radius: [ 8, 0, 0, 8 ] } });
@@ -34,14 +29,23 @@ export class Basket
             isStatic: true,
             collisionFilter: { group: this.collisionGroup }
         });
-        
-        this.matter.body.setPosition(this.body, { x: cx, y: top + 232 });
 
         this.matter.world.add(this.body);
-
+        
+        this.syncPositions();
         this.createNet();
 
         scene.sys.updateList.add(this);
+
+        scene.tweens.add({
+            targets: this.position,
+            x: x + 400,
+            y: y + 400,
+            ease: 'Sine.easeInOut',
+            duration: 2000,
+            yoyo: true,
+            repeat: -1
+        });
     }
 
     createNet ()
@@ -80,19 +84,8 @@ export class Basket
 
     preUpdate ()
     {
-        this.position.x += this.speed;
-
         this.syncPositions();
         this.renderNet();
-
-        if (this.position.x > ScaleFlow.getRight())
-        {
-            this.speed = this.speed * -1;
-        }
-        else if (this.position.x < ScaleFlow.getLeft())
-        {
-            this.speed = this.speed * -1;
-        }
     }
 
     syncPositions ()
@@ -105,16 +98,19 @@ export class Basket
             y: this.position.y + 168
         });
 
-        let x = this.body.position.x - 50;
-
-        for (let i = 0; i < 7; i++)
+        if (this.net)
         {
-            const body = this.net.bodies[i];
+            let x = this.body.position.x - 50;
 
-            this.matter.body.setPosition(body, {
-                x: x + (i * 16),
-                y: this.body.position.y
-            });
+            for (let i = 0; i < 7; i++)
+            {
+                const body = this.net.bodies[i];
+    
+                this.matter.body.setPosition(body, {
+                    x: x + (i * 16),
+                    y: this.body.position.y
+                });
+            }
         }
     }
 
