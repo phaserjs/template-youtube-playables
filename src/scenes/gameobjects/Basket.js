@@ -6,6 +6,8 @@ export class Basket
     {
         this.scene = scene;
         this.matter = scene.matter;
+        this.tweens = scene.tweens;
+
         this.active = true;
 
         this.position = new Phaser.Math.Vector2(x, y);
@@ -40,13 +42,25 @@ export class Basket
         scene.tweens.add({
             targets: this.position,
             x: x + 400,
-            y: y + 400,
+            // y: y + 400,
             ease: 'Sine.easeInOut',
             duration: 2000,
             yoyo: true,
             repeat: -1
         });
     }
+
+    // startHorizontalTween ()
+    // {
+    //     this.tweens.add({
+    //         targets: this.position,
+    //         x: x + 400,
+    //         ease: 'Sine.easeInOut',
+    //         duration: 3000,
+    //         yoyo: true,
+    //         repeat: -1
+    //     });
+    // }
 
     createNet ()
     {

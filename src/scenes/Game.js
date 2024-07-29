@@ -27,13 +27,27 @@ export class Game extends Scene
         const x = ScaleFlow.center.x;
         const y = ScaleFlow.getTop();
 
-        this.basket = new Basket(this, x, y + 64);
+        this.basket = new Basket(this, x - 200, y + 64);
+
+        this.balls = [];
+
+        for (let i = 0; i < 32; i++)
+        {
+            this.balls.push(new Ball(this));
+        }
 
         this.ballCollisionCategory = this.matter.world.nextCategory();
 
         this.input.on('pointerdown', (pointer) => {
 
-            new Ball(this, pointer.worldX, pointer.worldY);
+            const ball = Phaser.Utils.Array.GetFirst(this.balls, 'active', false);
+
+            if (ball)
+            {
+                const y = (pointer.worldY < ScaleFlow.center.y) ? ScaleFlow.center.y : pointer.worldY;
+
+                ball.throw(pointer.worldX, y);
+            }
 
         });
 

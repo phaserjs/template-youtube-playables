@@ -2,13 +2,13 @@ import { ScaleFlow } from '../../core/ScaleFlow';
 
 export class Ball
 {
-    constructor (scene, x, y)
+    constructor (scene)
     {
         this.scene = scene;
         this.matter = scene.matter;
-        this.active = true;
+        this.active = false;
 
-        this.ball = this.matter.add.image(x, y, 'ball');
+        this.ball = this.matter.add.image(-1000, 0, 'ball').setVisible(false);
 
         this.ball.setCircle(32, {
             friction: 0.8,
@@ -18,30 +18,52 @@ export class Ball
             label: 'ball'
         });
 
-        this.ball.setVelocityY(-30);
-        this.ball.setAngularVelocity(0.1);
-
         this.ball.setCollisionGroup(scene.basket.collisionGroup);
         this.ball.setCollisionCategory(scene.ballCollisionCategory);
         this.ball.setCollidesWith(scene.basket.collisionGroup);
+
+        this.scene.matter.world.remove(this.ball.body);
+
+        scene.sys.updateList.add(this);
+    }
+
+    throw (x, y)
+    {
+        this.ball.setPosition(x, y);
+        this.ball.setVisible(true);
+
+        this.scene.matter.world.add(this.ball.body);
+
+        this.ball.setVelocityX(0);
+        this.ball.setVelocityY(-32);
+
+        if (x < ScaleFlow.center.x)
+        {
+            this.ball.setAngularVelocity(-0.12);
+        }
+        else
+        {
+            this.ball.setAngularVelocity(0.12);
+        }
 
         this.ball.setData('hitTop', false);
         this.ball.setData('hitBottom', false);
         this.ball.setData('scored', false);
         this.ball.setData('missed', false);
 
-        scene.sys.updateList.add(this);
+        this.active = true;
     }
 
     preUpdate ()
     {
-        if (this.ball && this.ball.y > ScaleFlow.getBottom() + 100)
+        if (this.ball && this.ball.y > ScaleFlow.getBottom() + 300)
         {
-            this.ball.destroy();
+            this.active = false;
 
-            this.scene.sys.updateList.remove(this);
+            this.ball.setVisible(false);
+            this.ball.setPosition(-1000, 0);
 
-            this.ball = null;
+            this.scene.matter.world.remove(this.ball.body);
         }
     }
 }
