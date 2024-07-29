@@ -13,8 +13,8 @@ export class Ball
         this.ball.setCircle(32, {
             friction: 0.8,
             frictionStatic: 0.4,
-            restitution: 0.8,
-            density: 0.002,
+            restitution: 0.5,
+            density: 0.004,
             label: 'ball'
         });
 

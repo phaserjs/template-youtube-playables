@@ -7,13 +7,13 @@ export class Basket
         this.scene = scene;
         this.matter = scene.matter;
         this.active = true;
-        this.collisionGroup = this.matter.world.nextGroup();
 
         this.speed = 3;
 
         const cx = ScaleFlow.center.x;
-        const cy = ScaleFlow.center.y;
         const top = ScaleFlow.getTop();
+
+        this.position = new Phaser.Math.Vector2(cx, top + 64);
 
         this.basket = scene.add.image(cx, top + 64, 'basket').setOrigin(0.5, 0);
         this.netGraphic = scene.add.graphics().setDepth(9);
@@ -24,6 +24,8 @@ export class Basket
 
         const topSensor = this.matter.bodies.rectangle(0, 0, 128, 32, { isSensor: true, label: 'top' });
         const bottomSensor = this.matter.bodies.rectangle(0, 70, 100, 30, { isSensor: true, label: 'bottom' });
+
+        this.collisionGroup = this.matter.world.nextGroup();
 
         this.body = this.matter.body.create({
             parts: [ leftBumper, rightBumper, topSensor, bottomSensor ],
@@ -52,15 +54,12 @@ export class Basket
             collisionFilter: {
                 group: this.netCollisionGroup,
                 category: this.netCollisionCategory,
-            },
-            render: { visible: false }
+            }
         };
 
         const constraintOptions = {
             stiffness: 0.06
         };
-
-        // softBody: function (x, y, columns, rows, columnGap, rowGap, crossBrace, particleRadius, particleOptions, constraintOptions)
 
         this.net = this.matter.add.softBody(
             this.body.position.x - 60,
@@ -81,10 +80,30 @@ export class Basket
 
     preUpdate ()
     {
-        this.basket.x += this.speed;
-        this.hoop.x += this.speed;
+        this.position.x += this.speed;
 
-        this.matter.body.setPosition(this.body, { x: this.body.position.x + this.speed, y: this.body.position.y });
+        this.syncPositions();
+        this.renderNet();
+
+        if (this.position.x > ScaleFlow.getRight())
+        {
+            this.speed = this.speed * -1;
+        }
+        else if (this.position.x < ScaleFlow.getLeft())
+        {
+            this.speed = this.speed * -1;
+        }
+    }
+
+    syncPositions ()
+    {
+        this.basket.setPosition(this.position.x, this.position.y);
+        this.hoop.setPosition(this.position.x, this.position.y + 159);
+
+        this.matter.body.setPosition(this.body, {
+            x: this.position.x,
+            y: this.position.y + 168
+        });
 
         let x = this.body.position.x - 50;
 
@@ -92,61 +111,37 @@ export class Basket
         {
             const body = this.net.bodies[i];
 
-            this.matter.body.setPosition(body, { x: x + this.speed + (i * 16), y: this.body.position.y });
+            this.matter.body.setPosition(body, {
+                x: x + (i * 16),
+                y: this.body.position.y
+            });
         }
+    }
 
-        if (this.basket.x > ScaleFlow.getRight())
-        {
-            this.speed = this.speed * -1;
-        }
-        else if (this.basket.x < ScaleFlow.getLeft())
-        {
-            this.speed = this.speed * -1;
-        }
+    renderNet ()
+    {
+        const graphics = this.netGraphic;
+        const vector = this.matter.vector;
 
-        this.netGraphic.clear();
+        graphics.clear();
+        graphics.lineStyle(2, 0xffffff, 1);
 
         const constraints = this.matter.composite.allConstraints(this.matter.world.localWorld);
 
         for (let i = 0; i < constraints.length; i++)
         {
-            this.renderConstraint(constraints[i]);
+            const constraint = constraints[i];
+
+            const bodyA = constraint.bodyA;
+            const bodyB = constraint.bodyB;
+
+            const start = (bodyA) ? vector.add(bodyA.position, constraint.pointA) : constraint.pointA;
+            const end = (bodyB) ? vector.add(bodyB.position, constraint.pointB) : constraint.pointB;
+    
+            graphics.beginPath();
+            graphics.moveTo(start.x, start.y);
+            graphics.lineTo(end.x, end.y);
+            graphics.strokePath();
         }
-    }
-
-    renderConstraint (constraint)
-    {
-        const render = constraint.render;
-
-        if (!render.visible || !constraint.pointA || !constraint.pointB)
-        {
-            return this;
-        }
-
-        const graphics = this.netGraphic;
-        const vector = this.matter.vector;
-
-        graphics.lineStyle(2, 0xffffff, 1);
-
-        const bodyA = constraint.bodyA;
-        const bodyB = constraint.bodyB;
-        let start = constraint.pointA;
-        let end = constraint.pointB;
-
-        if (bodyA)
-        {
-            start = vector.add(bodyA.position, constraint.pointA);
-        }
-
-        if (bodyB)
-        {
-            end = vector.add(bodyB.position, constraint.pointB);
-        }
-
-        graphics.beginPath();
-        graphics.moveTo(start.x, start.y);
-        graphics.lineTo(end.x, end.y);
-
-        graphics.strokePath();
     }
 }
