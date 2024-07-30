@@ -47,17 +47,19 @@ export class MainMenu extends Scene
         const cx = ScaleFlow.center.x;
         const cy = ScaleFlow.center.y;
 
-        const logo = this.add.image(cx, cy - 200, 'logo');
-
+        const logo = this.add.image(cx, ScaleFlow.getTop() + 260, 'gameLogo');
+        
         logo.preFX.addShine(0.8, 1, 5);
 
-        this.add.image(cx, cy, 'youtube');
+        this.add.image(cx, cy, 'logo');
+
+        this.add.image(cx, cy + 190, 'youtube');
     }
 
     async createText ()
     {
         const cx = ScaleFlow.center.x;
-        const cy = ScaleFlow.center.y;
+        const cy = ScaleFlow.getBottom();
 
         const language = await YouTubePlayables.loadLanguage();
 
@@ -67,7 +69,7 @@ export class MainMenu extends Scene
             `Language: ${language}`
         ];
 
-        this.add.text(cx, cy + 300, info, {
+        this.add.text(cx, cy - 150, info, {
             fontFamily: 'Arial Black', fontSize: 30, color: '#ffffff',
             stroke: '#000000', strokeThickness: 6,
             align: 'center'

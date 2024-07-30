@@ -108,11 +108,11 @@ export class Game extends Scene
             if (!sprite.getData('hitBottom'))
             {
                 sprite.setData('hitTop', true);
-                console.log('Hit the top before the bottom');
+                // console.log('Hit the top before the bottom');
             }
             else
             {
-                console.log('Missed');
+                // console.log('Missed');
                 sprite.setData('missed', true);
             }
         }
@@ -120,12 +120,12 @@ export class Game extends Scene
         {
             if (!sprite.getData('hitTop'))
             {
-                console.log('Missed');
+                // console.log('Missed');
                 sprite.setData('missed', true);
             }
             else
             {
-                console.log('Hit the bottom AFTER hitting the top - SCORE!');
+                // console.log('Hit the bottom AFTER hitting the top - SCORE!');
                 sprite.setData('scored', true);
             }
         }

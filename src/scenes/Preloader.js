@@ -31,6 +31,7 @@ export class Preloader extends Scene
         this.load.image('audioOn', 'audio-on.png');
 
         this.load.image('gameBackground', 'game-background.png');
+        this.load.image('gameLogo', 'game-logo.png');
         this.load.image('basket', 'basket.png');
         this.load.image('hoop', 'hoop.png');
         this.load.image('ball', 'ball.png');
