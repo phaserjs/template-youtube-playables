@@ -23,6 +23,7 @@ export class Game extends Scene
         this.scene.launch('GameBackground');
         this.scene.bringToTop();
         this.scene.launch('Debug');
+        this.scene.launch('UI');
 
         const x = ScaleFlow.center.x;
         const y = ScaleFlow.getTop();
@@ -40,6 +41,12 @@ export class Game extends Scene
 
         this.input.on('pointerdown', (pointer) => {
 
+            if (this.handCursor)
+            {
+                this.handCursor.destroy();
+                this.handCursor = null;
+            }
+
             const ball = Phaser.Utils.Array.GetFirst(this.balls, 'active', false);
 
             if (ball)
@@ -53,8 +60,30 @@ export class Game extends Scene
 
         this.matter.world.on('collisionstart', (event, bodyA, bodyB) => this.collisionCheck(event, bodyA, bodyB));
 
-        // this.add.image(cx, 0, 'swish');
-        // this.add.image(cx, 1100, 'hand');
+        this.showHand();
+    }
+
+    showHand ()
+    {
+        const cx = ScaleFlow.center.x;
+        const cy = ScaleFlow.center.y + 200;
+        const x = ScaleFlow.getRight();
+        const y = ScaleFlow.getBottom();
+
+        this.handCursor = this.add.sprite(x, y, 'hands', 1).setDepth(20).setAlpha(0);
+
+        this.tweens.add({
+            targets: this.handCursor,
+            x: { value: cx, duration: 1000, ease: 'Sine.easeOut' },
+            y: { value: cy, duration: 1500, ease: 'Sine.easeOut' },
+            alpha: { value: 1, duration: 500, ease: 'Linear' },
+            onComplete: () => {
+                if (this.handCursor)
+                {
+                    this.handCursor.play('tapToStart');
+                }
+            }
+        });
     }
 
     collisionCheck (event, bodyA, bodyB)

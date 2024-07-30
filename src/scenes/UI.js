@@ -22,7 +22,10 @@ export class UI extends Phaser.Scene
     {
         this.audioIcon = this.add.sprite(0, 0, 'audioOff');
 
+        this.ballIcon = this.add.sprite(0, 0, 'ball');
+
         this.gridSnap.addSprite(this.audioIcon, GridSnap.TOP_RIGHT);
+        this.gridSnap.addSprite(this.ballIcon, GridSnap.TOP_LEFT);
         this.gridSnap.resize();
 
         //  If audio is enabled in the YouTube Player then enable it our game too.

@@ -35,13 +35,21 @@ export class Preloader extends Scene
         this.load.image('hoop', 'hoop.png');
         this.load.image('ball', 'ball.png');
         this.load.image('swish', 'swish.png');
-        this.load.image('hand', 'hand2.png');
+        this.load.spritesheet('hands', 'hands.png', { frameWidth: 190, frameHeight: 300 });
     }
 
     create ()
     {
         //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
         //  For example, you can define global animations here, so we can use them in other scenes.
+
+        this.anims.create({
+            key: 'tapToStart',
+            frames: this.anims.generateFrameNumbers('hands', { start: 0, end: 1 }),
+            frameRate: 6,
+            repeat: -1,
+            repeatDelay: 500
+        });
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         // this.scene.start('MainMenu');
