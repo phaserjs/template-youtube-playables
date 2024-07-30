@@ -22,13 +22,15 @@ export class Game extends Scene
     {
         this.scene.launch('GameBackground');
         this.scene.bringToTop();
-        this.scene.launch('Debug');
-        this.scene.launch('UI');
+        // this.scene.launch('Debug');
+        // this.scene.launch('UI');
 
         const x = ScaleFlow.center.x;
         const y = ScaleFlow.getTop();
 
         this.basket = new Basket(this, x - 200, y + 64);
+
+        this.registry.set('shots', 50);
 
         this.balls = [];
 
@@ -54,6 +56,8 @@ export class Game extends Scene
                 const y = (pointer.worldY < ScaleFlow.center.y) ? ScaleFlow.center.y : pointer.worldY;
 
                 ball.throw(pointer.worldX, y);
+
+                this.registry.inc('shots', -1);
             }
 
         });

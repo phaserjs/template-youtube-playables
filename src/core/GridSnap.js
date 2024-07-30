@@ -55,7 +55,7 @@ export class GridSnap
         }
     }
 
-    addSprite (sprite, position)
+    addSprite (sprite, position, offsetX = 0, offsetY = 0)
     {
         if (typeof position === 'number')
         {
@@ -64,11 +64,11 @@ export class GridSnap
             const originX = (x === 0) ? 0 : (x === this.gridWidth - 1) ? 1 : 0.5;
             const originY = (y === 0) ? 0 : (y === this.gridHeight - 1) ? 1 : 0.5;
 
-            this.sprites.set(sprite, { x, y, originX, originY, px: 0, py: 0 });
+            this.sprites.set(sprite, { x, y, originX, originY, px: 0, py: 0, offsetX, offsetY });
         }
         else
         {
-            this.sprites.set(sprite, this.getIndex(position));
+            this.sprites.set(sprite, Phaser.Utils.Objects.Merge(this.getIndex(position), { offsetX, offsetY }));
         }
     }
 
@@ -90,7 +90,7 @@ export class GridSnap
             const x = ScaleFlow.uiZone.x + (position.px * this.paddingX) + (position.originX * cellWidth) + Math.floor(position.x * cellWidth);
             const y = ScaleFlow.uiZone.y + (position.py * this.paddingY) + (position.originY * cellHeight) + Math.floor(position.y * cellHeight);
 
-            sprite.setPosition(x, y);
+            sprite.setPosition(x + position.offsetX, y + position.offsetY);
             sprite.setOrigin(position.originX, position.originY);
         });
     }

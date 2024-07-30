@@ -24,8 +24,15 @@ export class UI extends Phaser.Scene
 
         this.ballIcon = this.add.sprite(0, 0, 'ball');
 
-        this.gridSnap.addSprite(this.audioIcon, GridSnap.TOP_RIGHT);
+        this.ballCount = this.add.text(0, 0, '50', {
+            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 8,
+            align: 'left'
+        });
+
+        this.gridSnap.addSprite(this.audioIcon, GridSnap.TOP_RIGHT, -8);
         this.gridSnap.addSprite(this.ballIcon, GridSnap.TOP_LEFT);
+        this.gridSnap.addSprite(this.ballCount, GridSnap.TOP_LEFT, 80, 10);
         this.gridSnap.resize();
 
         //  If audio is enabled in the YouTube Player then enable it our game too.
@@ -55,6 +62,13 @@ export class UI extends Phaser.Scene
             }
 
         });
+
+        this.registry.events.on('changedata-shots', this.updateScore, this);
+    }
+
+    updateScore (parent, score)
+    {
+        this.ballCount.setText(score.toString());
     }
 
     enableAudio ()
