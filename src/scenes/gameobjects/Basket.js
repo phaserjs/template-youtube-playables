@@ -16,20 +16,21 @@ export class Basket
         this.netGraphic = scene.add.graphics().setDepth(9);
         this.hoop = scene.add.image(0, 0, 'hoop').setOrigin(0.5, 0).setDepth(10);
 
+        this.collisionGroup = this.matter.world.nextGroup();
+
         const leftBumper = this.matter.bodies.rectangle(-60, 52, 16, 54, { label: 'left', chamfer: { radius: [ 0, 8, 8, 0 ] } });
         const rightBumper = this.matter.bodies.rectangle(60, 52, 16, 54, { label: 'right', chamfer: { radius: [ 8, 0, 0, 8 ] } });
 
         const topSensor = this.matter.bodies.rectangle(0, 0, 128, 32, { isSensor: true, label: 'top' });
         const bottomSensor = this.matter.bodies.rectangle(0, 70, 100, 30, { isSensor: true, label: 'bottom' });
 
-        this.collisionGroup = this.matter.world.nextGroup();
-
         this.body = this.matter.body.create({
             parts: [ leftBumper, rightBumper, topSensor, bottomSensor ],
             restitution: 0.2,
-            ignoreGravity: true,
             isStatic: true,
-            collisionFilter: { group: this.collisionGroup }
+            collisionFilter: {
+                group: this.collisionGroup
+            }
         });
 
         this.matter.world.add(this.body);
@@ -37,47 +38,42 @@ export class Basket
         this.syncPositions();
         this.createNet();
 
-        scene.sys.updateList.add(this);
+        this.startHorizontalTween();
+        this.startVerticalTween();
 
-        scene.tweens.add({
+        scene.sys.updateList.add(this);
+    }
+
+    startHorizontalTween ()
+    {
+        const destX = (this.position.x > ScaleFlow.center.x) ? ScaleFlow.getLeft() + 100 : ScaleFlow.getRight() - 100;
+
+        this.tweens.add({
             targets: this.position,
-            x: x + 400,
-            // y: y + 400,
+            x: destX,
             ease: 'Sine.easeInOut',
-            duration: 2000,
-            yoyo: true,
-            repeat: -1
+            duration: 3000,
+            onComplete: () => this.startHorizontalTween()
         });
     }
 
-    // startHorizontalTween ()
-    // {
-    //     this.tweens.add({
-    //         targets: this.position,
-    //         x: x + 400,
-    //         ease: 'Sine.easeInOut',
-    //         duration: 3000,
-    //         yoyo: true,
-    //         repeat: -1
-    //     });
-    // }
+    startVerticalTween ()
+    {
+        const destY = (this.position.y < ScaleFlow.center.y) ? ScaleFlow.getBottom() - 300 : ScaleFlow.getTop() + 100;
+
+        this.tweens.add({
+            targets: this.position,
+            y: destY,
+            ease: 'Power2',
+            duration: 8000,
+            onComplete: () => this.startVerticalTween()
+        });
+    }
 
     createNet ()
     {
         this.netCollisionGroup = this.matter.world.nextGroup(true);
         this.netCollisionCategory = this.matter.world.nextCategory();
-
-        const particleOptions = {
-            friction: 0.00001,
-            collisionFilter: {
-                group: this.netCollisionGroup,
-                category: this.netCollisionCategory,
-            }
-        };
-
-        const constraintOptions = {
-            stiffness: 0.05
-        };
 
         this.net = this.matter.add.softBody(
             this.body.position.x - 60,
@@ -85,14 +81,25 @@ export class Basket
             7, 5,
             0, 0,
             false, 5,
-            particleOptions, constraintOptions
+            {
+                friction: 0.00001
+            },
+            {
+                stiffness: 0.05
+            }
         );
 
-        for (let i = 0; i < 7; i++)
+        for (let i = 0; i < this.net.bodies.length; i++)
         {
             const body = this.net.bodies[i];
 
-            body.isStatic = true;
+            if (i < 7)
+            {
+                body.isStatic = true;
+            }
+
+            //  Stop the net from hitting the basket bodies
+            body.collisionFilter.mask = 0;
         }
     }
 
