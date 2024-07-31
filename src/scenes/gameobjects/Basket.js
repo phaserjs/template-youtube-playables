@@ -2,7 +2,7 @@ import { ScaleFlow } from '../../core/ScaleFlow';
 
 export class Basket
 {
-    constructor (scene, x, y)
+    constructor (scene, x, y, collisionGroup)
     {
         this.scene = scene;
         this.matter = scene.matter;
@@ -16,20 +16,19 @@ export class Basket
         this.netGraphic = scene.add.graphics().setDepth(9);
         this.hoop = scene.add.image(0, 0, 'hoop').setOrigin(0.5, 0).setDepth(10);
 
-        this.collisionGroup = this.matter.world.nextGroup();
-
         const leftBumper = this.matter.bodies.rectangle(-60, 52, 16, 54, { label: 'left', chamfer: { radius: [ 0, 8, 8, 0 ] } });
         const rightBumper = this.matter.bodies.rectangle(60, 52, 16, 54, { label: 'right', chamfer: { radius: [ 8, 0, 0, 8 ] } });
 
         const topSensor = this.matter.bodies.rectangle(0, 0, 128, 32, { isSensor: true, label: 'top' });
-        const bottomSensor = this.matter.bodies.rectangle(0, 70, 100, 30, { isSensor: true, label: 'bottom' });
+        const bottomSensor = this.matter.bodies.rectangle(0, 66, 100, 40, { isSensor: true, label: 'bottom' });
 
         this.body = this.matter.body.create({
             parts: [ leftBumper, rightBumper, topSensor, bottomSensor ],
             restitution: 0.2,
+            friction: 1,
             isStatic: true,
             collisionFilter: {
-                group: this.collisionGroup
+                group: collisionGroup
             }
         });
 
@@ -72,9 +71,6 @@ export class Basket
 
     createNet ()
     {
-        this.netCollisionGroup = this.matter.world.nextGroup(true);
-        this.netCollisionCategory = this.matter.world.nextCategory();
-
         this.net = this.matter.add.softBody(
             this.body.position.x - 60,
             this.body.position.y,
@@ -101,6 +97,15 @@ export class Basket
             //  Stop the net from hitting the basket bodies
             body.collisionFilter.mask = 0;
         }
+
+        //  Get a reference to the middle body in the last row
+        this.netMiddle = this.net.bodies[17];
+    }
+
+    pullNet ()
+    {
+        //  Apply a little force to the bottom middle of the net
+        this.matter.body.setVelocity(this.netMiddle, { x: 0, y: 20 });
     }
 
     preUpdate ()
@@ -160,5 +165,14 @@ export class Basket
             graphics.lineTo(end.x, end.y);
             graphics.strokePath();
         }
+    }
+
+    destroy ()
+    {
+        this.scene.sys.updateList.remove(this);
+
+        this.basket.destroy();
+        this.hoop.destroy();
+        this.netGraphic.destroy();
     }
 }

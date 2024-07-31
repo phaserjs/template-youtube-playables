@@ -1,4 +1,6 @@
+import { ScaleFlow } from '../core/ScaleFlow';
 import { Scene } from 'phaser';
+import { YouTubePlayables } from '../YouTubePlayables';
 
 export class GameOver extends Scene
 {
@@ -9,13 +11,30 @@ export class GameOver extends Scene
 
     create ()
     {
-        this.cameras.main.setBackgroundColor(0xff0000);
+        this.scene.launch('GameBackground');
+        this.scene.bringToTop();
 
-        this.add.image(512, 384, 'background').setAlpha(0.5);
+        const cx = ScaleFlow.center.x;
+        const cy = ScaleFlow.center.y;
 
-        this.add.text(512, 384, 'Game Over', {
+        const logo = this.add.image(cx, ScaleFlow.getTop(), 'gameLogo');
+        
+        logo.preFX.addShine(0.8, 1, 5);
+
+        this.tweens.add({
+            targets: logo,
+            y: '+=260',
+            duration: 2000,
+            ease: 'Bounce.easeOut'
+        });
+
+        const info = [
+            `Highscore: ${this.registry.get('score')}`,
+        ];
+
+        this.add.text(cx, cy, info, {
             fontFamily: 'Arial Black', fontSize: 64, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
+            stroke: '#000000', strokeThickness: 6,
             align: 'center'
         }).setOrigin(0.5);
 

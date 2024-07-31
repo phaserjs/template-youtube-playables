@@ -2,13 +2,15 @@ import { ScaleFlow } from '../../core/ScaleFlow';
 
 export class Ball
 {
-    constructor (scene)
+    constructor (scene, id)
     {
         this.scene = scene;
         this.matter = scene.matter;
         this.active = false;
 
         this.ball = this.matter.add.image(-1000, 0, 'ball').setVisible(false);
+
+        this.ball.name = id.toString();
 
         this.ball.setCircle(32, {
             friction: 0.8,
@@ -18,9 +20,9 @@ export class Ball
             label: 'ball'
         });
 
-        this.ball.setCollisionGroup(scene.basket.collisionGroup);
+        this.ball.setCollisionGroup(scene.basketCollisionGroup);
         this.ball.setCollisionCategory(scene.ballCollisionCategory);
-        this.ball.setCollidesWith(scene.basket.collisionGroup);
+        this.ball.setCollidesWith(scene.basketCollisionGroup);
 
         this.scene.matter.world.remove(this.ball.body);
 
@@ -29,6 +31,8 @@ export class Ball
 
     throw (x, y)
     {
+        console.log(`Ball ${this.ball.name} thrown at ${x}, ${y}`);
+
         this.ball.setPosition(x, y);
         this.ball.setVisible(true);
 
@@ -58,7 +62,7 @@ export class Ball
 
     preUpdate ()
     {
-        if (this.ball && this.ball.y > ScaleFlow.getBottom() + 300)
+        if (this.active && this.ball && this.ball.y > ScaleFlow.getBottom() + 300)
         {
             this.active = false;
 
@@ -66,6 +70,16 @@ export class Ball
             this.ball.setPosition(-1000, 0);
 
             this.scene.matter.world.remove(this.ball.body);
+
+            console.log(`Ball ${this.ball.name} off-screen`);
         }
     }
+
+    destroy ()
+    {
+        this.scene.sys.updateList.remove(this);
+
+        this.ball.destroy();
+    }
+
 }

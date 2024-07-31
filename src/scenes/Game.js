@@ -22,49 +22,62 @@ export class Game extends Scene
     {
         this.scene.launch('GameBackground');
         this.scene.bringToTop();
-        // this.scene.launch('Debug');
-        // this.scene.launch('UI');
 
-        const x = ScaleFlow.center.x;
+        const x = ScaleFlow.getLeft();
+        const r = ScaleFlow.getRight();
+        const cx = ScaleFlow.center.x;
         const y = ScaleFlow.getTop();
 
-        this.basket = new Basket(this, x - 200, y + 128);
+        this.basketCollisionGroup = this.matter.world.nextGroup();
+        this.ballCollisionCategory = this.matter.world.nextCategory();
 
-        this.registry.set('shots', 50);
+        this.basket = new Basket(this, x, y + 128, this.basketCollisionGroup, this.netCollisionGroup, this.netCollisionCategory);
+        // this.basket2 = new Basket(this, r, y + 400, this.basketCollisionGroup, this.netCollisionGroup, this.netCollisionCategory);
+
+        this.registry.set('shots', 10);
 
         this.balls = [];
 
-        for (let i = 0; i < 32; i++)
+        for (let i = 0; i < 16; i++)
         {
-            this.balls.push(new Ball(this));
+            this.balls.push(new Ball(this, i));
         }
 
-        this.ballCollisionCategory = this.matter.world.nextCategory();
-
-        this.input.on('pointerdown', (pointer) => {
-
-            if (this.handCursor)
-            {
-                this.handCursor.destroy();
-                this.handCursor = null;
-            }
-
-            const ball = Phaser.Utils.Array.GetFirst(this.balls, 'active', false);
-
-            if (ball)
-            {
-                const y = (pointer.worldY < ScaleFlow.center.y) ? ScaleFlow.center.y : pointer.worldY;
-
-                ball.throw(pointer.worldX, y);
-
-                this.registry.inc('shots', -1);
-            }
-
-        });
-
         this.matter.world.on('collisionstart', (event, bodyA, bodyB) => this.collisionCheck(event, bodyA, bodyB));
+        this.matter.world.on('collisionactive', (event, bodyA, bodyB) => this.collisionCheck(event, bodyA, bodyB));
+
+        this.input.on('pointerdown', (pointer) => this.throwBall(pointer));
+
+        this.registry.set('score', 0);
+
+        this.pendingGameOver = false;
 
         this.showHand();
+    }
+
+    throwBall (pointer)
+    {
+        if (this.handCursor)
+        {
+            this.handCursor.destroy();
+            this.handCursor = null;
+        }
+
+        const ball = Phaser.Utils.Array.GetFirst(this.balls, 'active', false);
+
+        if (ball && this.registry.get('shots') > 0)
+        {
+            const y = (pointer.worldY < ScaleFlow.center.y) ? ScaleFlow.center.y : pointer.worldY;
+
+            ball.throw(pointer.worldX, y);
+
+            this.registry.inc('shots', -1);
+
+            if (this.registry.get('shots') === 0)
+            {
+                this.pendingGameOver = true;
+            }
+        }
     }
 
     showHand ()
@@ -100,57 +113,76 @@ export class Game extends Scene
 
         const sprite = (ball) ? ball.gameObject : null;
 
-        if (ball && (sprite.getData('scored') || sprite.getData('missed')))
+        if (!ball || !sprite)
         {
+            console.log(`invalid ball`);
             return;
         }
 
-        if (ball && left)
+        if (sprite.getData('scored') || sprite.getData('missed'))
         {
-            sprite.setData('hitLeft', true);
-        }
-        else if (ball && right)
-        {
-            sprite.setData('hitRight', true);
+            console.log(`ball ${sprite.name} exit 1`);
+            return;
         }
 
-        if (ball && top)
+        if (!sprite.getData('scored') && !sprite.getData('missed'))
+        {
+            if (left)
+            {
+                console.log(`ball ${sprite.name} hit left bumper`);
+                sprite.setData('hitLeft', true);
+            }
+            else if (right)
+            {
+                console.log(`ball ${sprite.name} hit right bumper`);
+                sprite.setData('hitRight', true);
+            }
+        }
+
+        if (top)
         {
             if (!sprite.getData('hitBottom'))
             {
                 // Ball hit the top sensor BEFORE hitting the bottom sensor
+                console.log(`ball ${sprite.name} hit top sensor`);
                 sprite.setData('hitTop', true);
             }
             else
             {
                 // Ball hit the top sensor AFTER hitting the bottom sensor, so it's a miss
+                console.log(`ball ${sprite.name} hit top sensor AFTER bottom`);
                 sprite.setData('missed', true);
             }
         }
-        else if (ball && bottom)
+        else if (bottom)
         {
             if (!sprite.getData('hitTop'))
             {
                 // Ball hit the bottom sensor BEFORE hitting the top sensor, so it's a miss
+                console.log(`ball ${sprite.name} hit bottom sensor first - miss`);
                 sprite.setData('missed', true);
             }
             else
             {
                 // Ball hit the bottom sensor AFTER hitting the top one, so they scored
+                console.log(`ball ${sprite.name} hit bottom sensor - scored. LR: ${sprite.getData('hitLeft')} ${sprite.getData('hitRight')}`);
                 sprite.setData('scored', true);
 
                 if (sprite.getData('hitLeft') && sprite.getData('hitRight'))
                 {
+                    this.registry.inc('score', 15);
                     this.launchScore('ricochet');
                     console.log('RICHOCHET SCORE!');
                 }
                 else if (!sprite.getData('hitLeft') && !sprite.getData('hitRight'))
                 {
+                    this.registry.inc('score', 20);
                     this.launchScore('swish');
                     console.log('SWISH SCORE!');
                 }
                 else
                 {
+                    this.registry.inc('score', 10);
                     this.launchScore('shot');
                     console.log('SCORE');
                 }
@@ -173,6 +205,31 @@ export class Game extends Scene
                 image.destroy();
             }
         });
+
+        this.basket.pullNet();
+    }
+
+    update ()
+    {
+        if (this.pendingGameOver)
+        {
+            //  All balls finished
+            let gameOver = true;
+
+            for (let i = 0; i < this.balls.length; i++)
+            {
+                if (this.balls[i].active)
+                {
+                    gameOver = false;
+                    return;
+                }
+            }
+
+            if (gameOver)
+            {
+                this.scene.start('GameOver');
+            }
+        }
     }
 
     shutdown ()

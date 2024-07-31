@@ -27,8 +27,10 @@ YouTubePlayables.boot(() => {
         physics: {
             default: 'matter',
             matter: {
+                positionIterations: 12,
+                velocityIterations: 8,
                 gravity: {
-                    y: 1.0
+                    y: 1.1
                 },
                 debug: false
             }
