@@ -28,7 +28,7 @@ export class Game extends Scene
         const x = ScaleFlow.center.x;
         const y = ScaleFlow.getTop();
 
-        this.basket = new Basket(this, x - 200, y + 64);
+        this.basket = new Basket(this, x - 200, y + 128);
 
         this.registry.set('shots', 50);
 
@@ -95,6 +95,8 @@ export class Game extends Scene
         const ball = (bodyA.label === 'ball') ? bodyA : (bodyB.label === 'ball') ? bodyB : null;
         const top = (bodyA.label === 'top') ? bodyA : (bodyB.label === 'top') ? bodyB : null;
         const bottom = (bodyA.label === 'bottom') ? bodyA : (bodyB.label === 'bottom') ? bodyB : null;
+        const left = (bodyA.label === 'left') ? bodyA : (bodyB.label === 'left') ? bodyB : null;
+        const right = (bodyA.label === 'right') ? bodyA : (bodyB.label === 'right') ? bodyB : null;
 
         const sprite = (ball) ? ball.gameObject : null;
 
@@ -103,16 +105,25 @@ export class Game extends Scene
             return;
         }
 
+        if (ball && left)
+        {
+            sprite.setData('hitLeft', true);
+        }
+        else if (ball && right)
+        {
+            sprite.setData('hitRight', true);
+        }
+
         if (ball && top)
         {
             if (!sprite.getData('hitBottom'))
             {
+                // Ball hit the top sensor BEFORE hitting the bottom sensor
                 sprite.setData('hitTop', true);
-                // console.log('Hit the top before the bottom');
             }
             else
             {
-                // console.log('Missed');
+                // Ball hit the top sensor AFTER hitting the bottom sensor, so it's a miss
                 sprite.setData('missed', true);
             }
         }
@@ -120,15 +131,48 @@ export class Game extends Scene
         {
             if (!sprite.getData('hitTop'))
             {
-                // console.log('Missed');
+                // Ball hit the bottom sensor BEFORE hitting the top sensor, so it's a miss
                 sprite.setData('missed', true);
             }
             else
             {
-                // console.log('Hit the bottom AFTER hitting the top - SCORE!');
+                // Ball hit the bottom sensor AFTER hitting the top one, so they scored
                 sprite.setData('scored', true);
+
+                if (sprite.getData('hitLeft') && sprite.getData('hitRight'))
+                {
+                    this.launchScore('ricochet');
+                    console.log('RICHOCHET SCORE!');
+                }
+                else if (!sprite.getData('hitLeft') && !sprite.getData('hitRight'))
+                {
+                    this.launchScore('swish');
+                    console.log('SWISH SCORE!');
+                }
+                else
+                {
+                    this.launchScore('shot');
+                    console.log('SCORE');
+                }
             }
         }
+    }
+
+    launchScore (type)
+    {
+        const x = ScaleFlow.getRight() + 200;
+        const cy = ScaleFlow.center.y;
+
+        const image = this.add.image(x, cy, type).setDepth(20);
+
+        this.tweens.add({
+            targets: image,
+            x: { value: ScaleFlow.getLeft() - 300, duration: 1500, ease: 'sine.inout' },
+            alpha: { value: 0, duration: 200, delay: 1000, ease: 'linear' },
+            onComplete: () => {
+                image.destroy();
+            }
+        });
     }
 
     shutdown ()

@@ -48,6 +48,8 @@ export class Ball
 
         this.ball.setData('hitTop', false);
         this.ball.setData('hitBottom', false);
+        this.ball.setData('hitLeft', false);
+        this.ball.setData('hitRight', false);
         this.ball.setData('scored', false);
         this.ball.setData('missed', false);
 

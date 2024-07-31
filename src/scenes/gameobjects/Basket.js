@@ -39,7 +39,7 @@ export class Basket
         this.createNet();
 
         this.startHorizontalTween();
-        this.startVerticalTween();
+        // this.startVerticalTween();
 
         scene.sys.updateList.add(this);
     }
@@ -52,7 +52,7 @@ export class Basket
             targets: this.position,
             x: destX,
             ease: 'Sine.easeInOut',
-            duration: 3000,
+            duration: 5000,
             onComplete: () => this.startHorizontalTween()
         });
     }

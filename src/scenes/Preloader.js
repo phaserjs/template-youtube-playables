@@ -36,6 +36,8 @@ export class Preloader extends Scene
         this.load.image('hoop', 'hoop.png');
         this.load.image('ball', 'ball.png');
         this.load.image('swish', 'swish.png');
+        this.load.image('shot', 'shot.png');
+        this.load.image('ricochet', 'ricochet.png');
         this.load.spritesheet('hands', 'hands.png', { frameWidth: 190, frameHeight: 300 });
     }
 
