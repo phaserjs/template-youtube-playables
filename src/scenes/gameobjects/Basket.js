@@ -2,15 +2,23 @@ import { ScaleFlow } from '../../core/ScaleFlow';
 
 export class Basket
 {
-    constructor (scene, x, y, collisionGroup)
+    constructor (scene, collisionGroup)
     {
         this.scene = scene;
         this.matter = scene.matter;
         this.tweens = scene.tweens;
 
-        this.active = true;
+        this.active = false;
+        this.visible = false;
 
-        this.position = new Phaser.Math.Vector2(x, y);
+        this.position = new Phaser.Math.Vector2(0, 0);
+        this.speed = new Phaser.Math.Vector2(0, 0);
+
+        this.targetX = new Phaser.Math.Vector2(0, 0);
+        this.targetY = new Phaser.Math.Vector2(0, 0);
+
+        this.easeX = 'Sine.easeInOut';
+        this.easeY = 'Power2';
 
         this.basket = scene.add.image(0, 0, 'basket').setOrigin(0.5, 0);
         this.netGraphic = scene.add.graphics().setDepth(9);
@@ -20,7 +28,7 @@ export class Basket
         const rightBumper = this.matter.bodies.rectangle(60, 52, 16, 54, { label: 'right', chamfer: { radius: [ 8, 0, 0, 8 ] } });
 
         const topSensor = this.matter.bodies.rectangle(0, 0, 128, 32, { isSensor: true, label: 'top' });
-        const bottomSensor = this.matter.bodies.rectangle(0, 66, 100, 40, { isSensor: true, label: 'bottom' });
+        const bottomSensor = this.matter.bodies.rectangle(0, 75, 100, 35, { isSensor: true, label: 'bottom' });
 
         this.body = this.matter.body.create({
             parts: [ leftBumper, rightBumper, topSensor, bottomSensor ],
@@ -31,47 +39,158 @@ export class Basket
                 group: collisionGroup
             }
         });
-
-        this.matter.world.add(this.body);
-        
+       
         this.syncPositions();
+
         this.createNet();
 
-        this.startHorizontalTween();
-        // this.startVerticalTween();
-
+        this.basket.setVisible(false);
+        this.hoop.setVisible(false);
+        this.netGraphic.setVisible(false);
+ 
         scene.sys.updateList.add(this);
+    }
+
+    setActive (x, y)
+    {
+        this.active = true;
+
+        this.basket.setVisible(true);
+        this.hoop.setVisible(true);
+        this.netGraphic.setVisible(true);
+
+        this.position.set(x, y);
+
+        this.syncPositions();
+
+        this.matter.world.add(this.body);
+        this.matter.world.add(this.net);
+
+        return this;
+    }
+
+    setInActive ()
+    {
+        this.active = false;
+
+        this.basket.setVisible(false);
+        this.hoop.setVisible(false);
+        this.netGraphic.setVisible(false);
+
+        this.matter.world.remove(this.body);
+        this.matter.world.remove(this.net);
+
+        return this;
+    }
+
+    setXSpeed (x)
+    {
+        this.speed.x = x;
+
+        return this;
+    }
+
+    setYSpeed (y)
+    {
+        this.speed.y = y;
+
+        return this;
+    }
+
+    setSpeed (x, y = 0)
+    {
+        this.speed.set(x, y);
+
+        return this;
+    }
+
+    setTweenXBetween (a, b)
+    {
+        this.targetX.set(a, b);
+
+        return this;
+    }
+
+    setTweenYBetween (a, b)
+    {
+        this.targetY.set(a, b);
+
+        return this;
+    }
+
+    setXEase (x)
+    {
+        this.easeX = x;
+
+        return this;
+    }
+
+    setYEase (y)
+    {
+        this.easeY = y;
+
+        return this;
+    }
+
+    setEase (x, y)
+    {
+        this.easeX = x;
+
+        if (y)
+        {
+            this.easeY = y;
+        }
+
+        return this;
     }
 
     startHorizontalTween ()
     {
-        const destX = (this.position.x > ScaleFlow.center.x) ? ScaleFlow.getLeft() + 100 : ScaleFlow.getRight() - 100;
-
         this.tweens.add({
             targets: this.position,
-            x: destX,
-            ease: 'Sine.easeInOut',
-            duration: 5000,
+            x: this.targetX.y,
+            ease: this.easeX,
+            duration: this.speed.x,
+            onComplete: () => this.loopHorizontalTween()
+        });
+    }
+
+    loopHorizontalTween ()
+    {
+        this.tweens.add({
+            targets: this.position,
+            x: this.targetX.x,
+            ease: this.easeX,
+            duration: this.speed.x,
             onComplete: () => this.startHorizontalTween()
         });
     }
 
     startVerticalTween ()
     {
-        const destY = (this.position.y < ScaleFlow.center.y) ? ScaleFlow.getBottom() - 300 : ScaleFlow.getTop() + 100;
-
         this.tweens.add({
             targets: this.position,
-            y: destY,
-            ease: 'Power2',
-            duration: 8000,
+            y: this.targetY.y,
+            ease: this.easeY,
+            duration: this.speed.y,
+            onComplete: () => this.loopVerticalTween()
+        });
+    }
+
+    loopVerticalTween ()
+    {
+        this.tweens.add({
+            targets: this.position,
+            y: this.targetY.x,
+            ease: this.easeY,
+            duration: this.speed.y,
             onComplete: () => this.startVerticalTween()
         });
     }
 
     createNet ()
     {
-        this.net = this.matter.add.softBody(
+        this.net = this.matter.composites.softBody(
             this.body.position.x - 60,
             this.body.position.y,
             7, 5,

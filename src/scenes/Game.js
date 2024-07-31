@@ -23,18 +23,11 @@ export class Game extends Scene
         this.scene.launch('GameBackground');
         this.scene.bringToTop();
 
-        const x = ScaleFlow.getLeft();
-        const r = ScaleFlow.getRight();
-        const cx = ScaleFlow.center.x;
-        const y = ScaleFlow.getTop();
-
         this.basketCollisionGroup = this.matter.world.nextGroup();
         this.ballCollisionCategory = this.matter.world.nextCategory();
 
-        this.basket = new Basket(this, x, y + 128, this.basketCollisionGroup, this.netCollisionGroup, this.netCollisionCategory);
-        // this.basket2 = new Basket(this, r, y + 400, this.basketCollisionGroup, this.netCollisionGroup, this.netCollisionCategory);
-
-        this.registry.set('shots', 10);
+        this.basket1 = new Basket(this, this.basketCollisionGroup);
+        this.basket2 = new Basket(this, this.basketCollisionGroup);
 
         this.balls = [];
 
@@ -48,11 +41,63 @@ export class Game extends Scene
 
         this.input.on('pointerdown', (pointer) => this.throwBall(pointer));
 
+        this.registry.set('shots', 50);
         this.registry.set('score', 0);
 
         this.pendingGameOver = false;
 
         this.showHand();
+
+        this.checkStage();
+    }
+
+    checkStage ()
+    {
+        const left = ScaleFlow.getLeft() + 90;
+        const right = ScaleFlow.getRight() - 90;
+        const top = ScaleFlow.getTop() + 128;
+
+        const shots = this.registry.get('shots');
+
+        const basket1 = this.basket1;
+        const basket2 = this.basket2;
+
+        switch (shots)
+        {
+            case 50:
+                console.log('Stage 1');
+                basket1.setActive(left, top);
+                basket1.setTweenXBetween(left, right).setXSpeed(5000).setXEase('Linear');
+                basket1.startHorizontalTween();
+                break;
+
+            case 45:
+                console.log('Stage 2');
+                basket1.setEase('Sine.easeInOut');
+                break;
+
+            case 40:
+                console.log('Stage 3');
+                basket1.setXSpeed(3000);
+                break;
+
+            case 35:
+                console.log('Stage 4');
+                basket1.setTweenYBetween(top, top + 150).setYSpeed(2000).setYEase('Sine.easeInOut');
+                basket1.startVerticalTween();
+                break;
+    
+            case 30:
+                console.log('Stage 5');
+                basket2.setActive(left, top + 380);
+                basket2.setTweenXBetween(left, right).setXSpeed(5000).setXEase('Sine.easeInOut');
+                basket2.startHorizontalTween();
+                break;
+
+            case 0:
+                pendingGameOver = true;
+                break;
+        }
     }
 
     throwBall (pointer)
@@ -73,10 +118,7 @@ export class Game extends Scene
 
             this.registry.inc('shots', -1);
 
-            if (this.registry.get('shots') === 0)
-            {
-                this.pendingGameOver = true;
-            }
+            this.time.delayedCall(2000, this.checkStage, [], this);
         }
     }
 
@@ -206,7 +248,7 @@ export class Game extends Scene
             }
         });
 
-        this.basket.pullNet();
+        // this.basket.pullNet();
     }
 
     update ()

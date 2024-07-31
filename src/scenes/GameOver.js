@@ -43,5 +43,11 @@ export class GameOver extends Scene
             this.scene.start('MainMenu');
 
         });
+
+        //  Send the score to YouTube
+        YouTubePlayables.sendScore(this.registry.get('score'));
+
+        //  you can also do:
+        // ytgame?.engagement.sendScore({ value: this.registry.get('score') });
     }
 }
