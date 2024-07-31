@@ -25,29 +25,21 @@ export class Basket
         this.netGraphic = scene.add.graphics().setDepth(9);
         this.hoop = scene.add.image(0, 0, 'assets', 'hoop').setOrigin(0.5, 0).setDepth(10);
 
-        const leftBumper = this.matter.bodies.rectangle(-60, 52, 16, 54, { label: 'left', chamfer: { radius: [ 0, 8, 8, 0 ] } });
-        const rightBumper = this.matter.bodies.rectangle(60, 52, 16, 54, { label: 'right', chamfer: { radius: [ 8, 0, 0, 8 ] } });
+        const leftBumper = this.matter.bodies.rectangle(-60, 52, 16, 54, { label: 'left', chamfer: { radius: [ 0, 8, 8, 0 ] }, restitution: 0.2 });
+        const rightBumper = this.matter.bodies.rectangle(60, 52, 16, 54, { label: 'right', chamfer: { radius: [ 8, 0, 0, 8 ] }, restitution: 0.2 });
 
         const topSensor = this.matter.bodies.rectangle(0, 0, 128, 32, { isSensor: true, label: 'top' });
         const bottomSensor = this.matter.bodies.rectangle(0, 75, 100, 35, { isSensor: true, label: 'bottom' });
 
         this.body = this.matter.body.create({
             parts: [ leftBumper, rightBumper, topSensor, bottomSensor ],
-            restitution: 0.2,
-            friction: 1,
             isStatic: true,
             collisionFilter: {
                 group: collisionGroup
             },
             gameObject: this.basket
         });
-
-        console.log(this.body);
        
-        this.syncPositions();
-
-        this.createNet();
-
         this.basket.setVisible(false);
         this.hoop.setVisible(false);
         this.netGraphic.setVisible(false);
@@ -65,10 +57,12 @@ export class Basket
 
         this.position.set(x, y);
 
-        this.syncPositions();
+        this.createNet();
 
         this.matter.world.add(this.body);
         this.matter.world.add(this.net);
+
+        this.syncPositions();
 
         return this;
     }
@@ -195,16 +189,16 @@ export class Basket
     createNet ()
     {
         this.net = this.matter.composites.softBody(
-            this.body.position.x - 60,
-            this.body.position.y,
+            this.position.x - 60,
+            this.position.y + 160,
             7, 5,
             0, 0,
             false, 5,
             {
-                friction: 0.00001
+                friction: 0.01
             },
             {
-                stiffness: 0.05
+                stiffness: 0.09
             }
         );
 
@@ -220,15 +214,13 @@ export class Basket
             //  Stop the net from hitting the basket bodies
             body.collisionFilter.mask = 0;
         }
-
-        //  Get a reference to the middle body in the last row
-        this.netMiddle = this.net.bodies[17];
     }
 
     pullNet ()
     {
         //  Apply a little force to the bottom middle of the net
-        this.matter.body.setVelocity(this.netMiddle, { x: 0, y: 20 });
+
+        this.matter.body.setVelocity(this.net.bodies[17], { x: 0, y: 20 });
     }
 
     preUpdate ()

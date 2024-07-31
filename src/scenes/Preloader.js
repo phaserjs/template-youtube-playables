@@ -24,22 +24,9 @@ export class Preloader extends Scene
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
 
-        this.load.atlas('assets', 'basket-shoot-out.png', 'basket-shoot-out.json');
-
-        // this.load.image('logo', 'logo.png');
-        // this.load.image('youtube', 'youtube-logo.png');
-        // this.load.image('tile', 'tile.png');
-        // this.load.image('audioOff', 'audio-off.png');
-        // this.load.image('audioOn', 'audio-on.png');
-
         this.load.image('gameBackground', 'game-background.png');
-        // this.load.image('gameLogo', 'game-logo.png');
         this.load.image('basket', 'basket.png');
-        // this.load.image('hoop', 'hoop.png');
-        // this.load.image('ball', 'ball.png');
-        // this.load.image('swish', 'swish.png');
-        // this.load.image('shot', 'shot.png');
-        // this.load.image('ricochet', 'ricochet.png');
+        this.load.atlas('assets', 'basket-shoot-out.png', 'basket-shoot-out.json');
         this.load.spritesheet('hands', 'hands.png', { frameWidth: 190, frameHeight: 300 });
     }
 
@@ -56,10 +43,11 @@ export class Preloader extends Scene
             repeatDelay: 500
         });
 
+        //  Launch our UI Scene
+        this.scene.launch('UI');
+
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         this.scene.start('MainMenu');
-
-        // this.scene.start('Game');
     }
 
     createLoadingBar ()

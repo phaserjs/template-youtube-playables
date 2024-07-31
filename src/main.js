@@ -30,7 +30,7 @@ YouTubePlayables.boot(() => {
                 positionIterations: 12,
                 velocityIterations: 8,
                 gravity: {
-                    y: 1.1
+                    y: 1.6
                 },
                 debug: false
             }

@@ -18,6 +18,11 @@ export class Game extends Scene
         this.events.on('shutdown', this.shutdown, this);
     }
 
+    //  TODO:
+
+    //  1) Sound FX
+    //  2) Game Data (what?)
+
     create ()
     {
         this.scene.launch('GameBackground');
@@ -31,13 +36,13 @@ export class Game extends Scene
 
         this.balls = [];
 
-        for (let i = 0; i < 16; i++)
+        for (let i = 0; i < 8; i++)
         {
             this.balls.push(new Ball(this, i));
         }
 
-        // this.matter.world.on('collisionstart', (event, bodyA, bodyB) => this.collisionCheck(event, bodyA, bodyB));
-        // this.matter.world.on('collisionactive', (event, bodyA, bodyB) => this.collisionCheck(event, bodyA, bodyB));
+        this.matter.world.on('collisionstart', (event, bodyA, bodyB) => this.collisionCheck(event, bodyA, bodyB));
+        this.matter.world.on('collisionactive', (event, bodyA, bodyB) => this.collisionCheck(event, bodyA, bodyB));
 
         this.input.on('pointerdown', (pointer) => this.throwBall(pointer));
 
@@ -73,7 +78,7 @@ export class Game extends Scene
 
             case 45:
                 console.log('Stage 2');
-                basket1.setEase('Sine.easeInOut');
+                basket1.setEase('Sine.easeInOut').setXSpeed(4000);
                 break;
 
             case 40:
@@ -83,19 +88,30 @@ export class Game extends Scene
 
             case 35:
                 console.log('Stage 4');
-                basket1.setTweenYBetween(top, top + 150).setYSpeed(2000).setYEase('Sine.easeInOut');
-                basket1.startVerticalTween();
-                break;
-    
-            case 30:
-                console.log('Stage 5');
                 basket2.setActive(left, top + 380);
                 basket2.setTweenXBetween(left, right).setXSpeed(5000).setXEase('Sine.easeInOut');
                 basket2.startHorizontalTween();
                 break;
-
+    
+            case 25:
+                console.log('Stage 5');
+                basket1.setTweenYBetween(top, top + 150).setYSpeed(2000).setYEase('Sine.easeInOut');
+                basket1.startVerticalTween();
+                break;
+    
+            case 20:
+                console.log('Stage 6');
+                basket2.setXSpeed(4000);
+                break;
+    
+            case 10:
+                console.log('Stage 7');
+                basket2.setTweenYBetween(top + 380, top + 480).setYSpeed(2000).setYEase('Sine.easeInOut');
+                basket2.startVerticalTween();
+                break;
+        
             case 0:
-                pendingGameOver = true;
+                this.pendingGameOver = true;
                 break;
         }
     }
@@ -118,7 +134,7 @@ export class Game extends Scene
 
             this.registry.inc('shots', -1);
 
-            this.time.delayedCall(2000, this.checkStage, [], this);
+            this.checkStage();
         }
     }
 
@@ -143,11 +159,6 @@ export class Game extends Scene
                 }
             }
         });
-    }
-
-    checkBasket (ball, body)
-    {
-
     }
 
     collisionCheck (event, bodyA, bodyB)
@@ -182,7 +193,6 @@ export class Game extends Scene
 
         if (!ball || !ballSprite || !netSprite)
         {
-            console.log(`invalid ball / net`);
             return;
         }
 
@@ -196,7 +206,6 @@ export class Game extends Scene
 
         if (hasScored || hasMissed)
         {
-            console.log(`ball ${ballSprite.name} exit 1`);
             return;
         }
 
@@ -204,12 +213,12 @@ export class Game extends Scene
         {
             if (left)
             {
-                console.log(`ball ${ballSprite.name} hit left bumper`);
+                // console.log(`ball ${ballSprite.name} hit left bumper`);
                 ballSprite.setData(`hitLeft${netID}`, true);
             }
             else if (right)
             {
-                console.log(`ball ${ballSprite.name} hit right bumper`);
+                // console.log(`ball ${ballSprite.name} hit right bumper`);
                 ballSprite.setData(`hitRight${netID}`, true);
             }
         }
@@ -219,13 +228,11 @@ export class Game extends Scene
             if (!hitBottom)
             {
                 // Ball hit the top sensor BEFORE hitting the bottom sensor
-                console.log(`ball ${ballSprite.name} hit top sensor`);
                 ballSprite.setData(`hitTop${netID}`, true);
             }
             else
             {
                 // Ball hit the top sensor AFTER hitting the bottom sensor, so it's a miss
-                console.log(`ball ${ballSprite.name} hit top sensor AFTER bottom`);
                 ballSprite.setData(`missed${netID}`, true);
             }
         }
@@ -234,43 +241,44 @@ export class Game extends Scene
             if (!hitTop)
             {
                 // Ball hit the bottom sensor BEFORE hitting the top sensor, so it's a miss
-                console.log(`ball ${ballSprite.name} hit bottom sensor first - miss`);
                 ballSprite.setData(`missed${netID}`, true);
             }
             else
             {
                 // Ball hit the bottom sensor AFTER hitting the top one, so they scored
-                console.log(`ball ${ballSprite.name} hit bottom sensor - scored. LR: ${ballSprite.getData('hitLeft')} ${ballSprite.getData('hitRight')}`);
                 ballSprite.setData(`scored${netID}`, true);
 
-                if (hitLeft && hitRight)
+                //  Check if they also hit the other net
+                if ((netID === 1 && ballSprite.getData('scored2')) || (netID === 2 && ballSprite.getData('scored1')))
+                {
+                    this.registry.inc('score', 100);
+                    this.launchScore('super-shot', netID);
+                }
+                else if (hitLeft && hitRight)
                 {
                     this.registry.inc('score', 15);
-                    this.launchScore('ricochet');
-                    console.log('RICHOCHET SCORE!');
+                    this.launchScore('ricochet', netID);
                 }
                 else if (!hitLeft && !hitRight)
                 {
                     this.registry.inc('score', 20);
-                    this.launchScore('swish');
-                    console.log('SWISH SCORE!');
+                    this.launchScore('swish', netID);
                 }
                 else
                 {
                     this.registry.inc('score', 10);
-                    this.launchScore('shot');
-                    console.log('SCORE');
+                    this.launchScore('shot', netID);
                 }
             }
         }
     }
 
-    launchScore (type)
+    launchScore (type, netID)
     {
         const x = ScaleFlow.getRight() + 200;
         const cy = ScaleFlow.center.y;
 
-        const image = this.add.image(x, cy, type).setDepth(20);
+        const image = this.add.image(x, cy, 'assets', type).setDepth(20);
 
         this.tweens.add({
             targets: image,
@@ -281,7 +289,14 @@ export class Game extends Scene
             }
         });
 
-        // this.basket.pullNet();
+        if (netID === 1)
+        {
+            this.basket1.pullNet();
+        }
+        else if (netID === 2)
+        {
+            this.basket2.pullNet();
+        }
     }
 
     update ()
@@ -302,6 +317,7 @@ export class Game extends Scene
 
             if (gameOver)
             {
+                this.scene.stop('GameBackground');
                 this.scene.start('GameOver');
             }
         }

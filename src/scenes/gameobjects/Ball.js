@@ -14,8 +14,8 @@ export class Ball
 
         this.ball.setCircle(32, {
             friction: 0.8,
-            frictionStatic: 0.4,
-            restitution: 0.5,
+            frictionStatic: 0.8,
+            restitution: 0.4,
             density: 0.004,
             label: 'ball'
         });
@@ -39,7 +39,7 @@ export class Ball
         this.scene.matter.world.add(this.ball.body);
 
         this.ball.setVelocityX(0);
-        this.ball.setVelocityY(-32);
+        this.ball.setVelocityY(-35);
 
         if (x < ScaleFlow.center.x)
         {

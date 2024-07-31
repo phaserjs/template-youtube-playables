@@ -38,8 +38,8 @@ export class MainMenu extends Scene
         //  Launch our animated background Scene
         this.scene.launch('Background');
 
-        //  Launch our UI Scene
-        this.scene.launch('UI');
+        //  Bring our UI Scene to the top
+        this.scene.bringToTop('UI');
     }
 
     createLogos ()
