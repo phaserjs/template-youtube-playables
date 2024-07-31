@@ -26,8 +26,8 @@ export class Game extends Scene
         this.basketCollisionGroup = this.matter.world.nextGroup();
         this.ballCollisionCategory = this.matter.world.nextCategory();
 
-        this.basket1 = new Basket(this, this.basketCollisionGroup);
-        this.basket2 = new Basket(this, this.basketCollisionGroup);
+        this.basket1 = new Basket(1, this, this.basketCollisionGroup);
+        this.basket2 = new Basket(2, this, this.basketCollisionGroup);
 
         this.balls = [];
 
@@ -36,8 +36,8 @@ export class Game extends Scene
             this.balls.push(new Ball(this, i));
         }
 
-        this.matter.world.on('collisionstart', (event, bodyA, bodyB) => this.collisionCheck(event, bodyA, bodyB));
-        this.matter.world.on('collisionactive', (event, bodyA, bodyB) => this.collisionCheck(event, bodyA, bodyB));
+        // this.matter.world.on('collisionstart', (event, bodyA, bodyB) => this.collisionCheck(event, bodyA, bodyB));
+        // this.matter.world.on('collisionactive', (event, bodyA, bodyB) => this.collisionCheck(event, bodyA, bodyB));
 
         this.input.on('pointerdown', (pointer) => this.throwBall(pointer));
 
@@ -145,78 +145,111 @@ export class Game extends Scene
         });
     }
 
+    checkBasket (ball, body)
+    {
+
+    }
+
     collisionCheck (event, bodyA, bodyB)
     {
-        const ball = (bodyA.label === 'ball') ? bodyA : (bodyB.label === 'ball') ? bodyB : null;
-        const top = (bodyA.label === 'top') ? bodyA : (bodyB.label === 'top') ? bodyB : null;
-        const bottom = (bodyA.label === 'bottom') ? bodyA : (bodyB.label === 'bottom') ? bodyB : null;
-        const left = (bodyA.label === 'left') ? bodyA : (bodyB.label === 'left') ? bodyB : null;
-        const right = (bodyA.label === 'right') ? bodyA : (bodyB.label === 'right') ? bodyB : null;
+        let ball = null;
+        let top = null;
+        let bottom = null;
+        let left = null;
+        let right = null;
+        let netSprite = null;
 
-        const sprite = (ball) ? ball.gameObject : null;
-
-        if (!ball || !sprite)
+        if (bodyA.label === 'ball')
         {
-            console.log(`invalid ball`);
+            ball = bodyA;
+            top = (bodyB.label === 'top') ? bodyB : null;
+            bottom = (bodyB.label === 'bottom') ? bodyB : null;
+            left = (bodyB.label === 'left') ? bodyB : null;
+            right = (bodyB.label === 'right') ? bodyB : null;
+            netSprite = bodyB.parent.gameObject;
+        }
+        else if (bodyB.label === 'ball')
+        {
+            ball = bodyB;
+            top = (bodyA.label === 'top') ? bodyA : null;
+            bottom = (bodyA.label === 'bottom') ? bodyA : null;
+            left = (bodyA.label === 'left') ? bodyA : null;
+            right = (bodyA.label === 'right') ? bodyA : null;
+            netSprite = bodyA.parent.gameObject;
+        }
+
+        const ballSprite = (ball) ? ball.gameObject : null;
+
+        if (!ball || !ballSprite || !netSprite)
+        {
+            console.log(`invalid ball / net`);
             return;
         }
 
-        if (sprite.getData('scored') || sprite.getData('missed'))
+        const netID = netSprite.name;
+        const hasScored = ballSprite.getData(`scored${netID}`);
+        const hasMissed = ballSprite.getData(`missed${netID}`);
+        const hitBottom = ballSprite.getData(`hitBottom${netID}`);
+        const hitTop = ballSprite.getData(`hitTop${netID}`);
+        const hitLeft = ballSprite.getData(`hitLeft${netID}`);
+        const hitRight = ballSprite.getData(`hitRight${netID}`);
+
+        if (hasScored || hasMissed)
         {
-            console.log(`ball ${sprite.name} exit 1`);
+            console.log(`ball ${ballSprite.name} exit 1`);
             return;
         }
 
-        if (!sprite.getData('scored') && !sprite.getData('missed'))
+        if (!hasScored && !hasMissed)
         {
             if (left)
             {
-                console.log(`ball ${sprite.name} hit left bumper`);
-                sprite.setData('hitLeft', true);
+                console.log(`ball ${ballSprite.name} hit left bumper`);
+                ballSprite.setData(`hitLeft${netID}`, true);
             }
             else if (right)
             {
-                console.log(`ball ${sprite.name} hit right bumper`);
-                sprite.setData('hitRight', true);
+                console.log(`ball ${ballSprite.name} hit right bumper`);
+                ballSprite.setData(`hitRight${netID}`, true);
             }
         }
 
         if (top)
         {
-            if (!sprite.getData('hitBottom'))
+            if (!hitBottom)
             {
                 // Ball hit the top sensor BEFORE hitting the bottom sensor
-                console.log(`ball ${sprite.name} hit top sensor`);
-                sprite.setData('hitTop', true);
+                console.log(`ball ${ballSprite.name} hit top sensor`);
+                ballSprite.setData(`hitTop${netID}`, true);
             }
             else
             {
                 // Ball hit the top sensor AFTER hitting the bottom sensor, so it's a miss
-                console.log(`ball ${sprite.name} hit top sensor AFTER bottom`);
-                sprite.setData('missed', true);
+                console.log(`ball ${ballSprite.name} hit top sensor AFTER bottom`);
+                ballSprite.setData(`missed${netID}`, true);
             }
         }
         else if (bottom)
         {
-            if (!sprite.getData('hitTop'))
+            if (!hitTop)
             {
                 // Ball hit the bottom sensor BEFORE hitting the top sensor, so it's a miss
-                console.log(`ball ${sprite.name} hit bottom sensor first - miss`);
-                sprite.setData('missed', true);
+                console.log(`ball ${ballSprite.name} hit bottom sensor first - miss`);
+                ballSprite.setData(`missed${netID}`, true);
             }
             else
             {
                 // Ball hit the bottom sensor AFTER hitting the top one, so they scored
-                console.log(`ball ${sprite.name} hit bottom sensor - scored. LR: ${sprite.getData('hitLeft')} ${sprite.getData('hitRight')}`);
-                sprite.setData('scored', true);
+                console.log(`ball ${ballSprite.name} hit bottom sensor - scored. LR: ${ballSprite.getData('hitLeft')} ${ballSprite.getData('hitRight')}`);
+                ballSprite.setData(`scored${netID}`, true);
 
-                if (sprite.getData('hitLeft') && sprite.getData('hitRight'))
+                if (hitLeft && hitRight)
                 {
                     this.registry.inc('score', 15);
                     this.launchScore('ricochet');
                     console.log('RICHOCHET SCORE!');
                 }
-                else if (!sprite.getData('hitLeft') && !sprite.getData('hitRight'))
+                else if (!hitLeft && !hitRight)
                 {
                     this.registry.inc('score', 20);
                     this.launchScore('swish');

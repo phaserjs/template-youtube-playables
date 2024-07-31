@@ -47,13 +47,13 @@ export class MainMenu extends Scene
         const cx = ScaleFlow.center.x;
         const cy = ScaleFlow.center.y;
 
-        const logo = this.add.image(cx, ScaleFlow.getTop() + 260, 'gameLogo');
+        const logo = this.add.image(cx, ScaleFlow.getTop() + 260, 'assets', 'game-logo');
         
         logo.preFX.addShine(0.8, 1, 5);
 
-        this.add.image(cx, cy, 'logo');
+        this.add.image(cx, cy, 'assets', 'logo');
 
-        this.add.image(cx, cy + 190, 'youtube');
+        this.add.image(cx, cy + 190, 'assets', 'youtube-logo');
     }
 
     async createText ()

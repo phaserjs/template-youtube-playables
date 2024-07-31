@@ -20,9 +20,9 @@ export class UI extends Phaser.Scene
 
     create ()
     {
-        this.audioIcon = this.add.sprite(0, 0, 'audioOff');
+        this.audioIcon = this.add.sprite(0, 0, 'assets', 'audio-off');
 
-        this.ballIcon = this.add.sprite(0, 0, 'ball');
+        this.ballIcon = this.add.sprite(0, 0, 'assets', 'ball');
 
         this.ballCount = this.add.text(0, 0, '50', {
             fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
@@ -75,13 +75,13 @@ export class UI extends Phaser.Scene
     {
         this.sound.setMute(false);
 
-        this.audioIcon.setTexture('audioOn');
+        this.audioIcon.setFrame('audio-on');
     }
 
     disableAudio ()
     {
         this.sound.setMute(true);
 
-        this.audioIcon.setTexture('audioOff');
+        this.audioIcon.setFrame('audio-off');
     }
 }

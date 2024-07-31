@@ -2,12 +2,13 @@ import { ScaleFlow } from '../../core/ScaleFlow';
 
 export class Basket
 {
-    constructor (scene, collisionGroup)
+    constructor (id, scene, collisionGroup)
     {
         this.scene = scene;
         this.matter = scene.matter;
         this.tweens = scene.tweens;
 
+        this.id = id;
         this.active = false;
         this.visible = false;
 
@@ -20,9 +21,9 @@ export class Basket
         this.easeX = 'Sine.easeInOut';
         this.easeY = 'Power2';
 
-        this.basket = scene.add.image(0, 0, 'basket').setOrigin(0.5, 0);
+        this.basket = scene.add.image(0, 0, 'basket').setOrigin(0.5, 0).setName(id);
         this.netGraphic = scene.add.graphics().setDepth(9);
-        this.hoop = scene.add.image(0, 0, 'hoop').setOrigin(0.5, 0).setDepth(10);
+        this.hoop = scene.add.image(0, 0, 'assets', 'hoop').setOrigin(0.5, 0).setDepth(10);
 
         const leftBumper = this.matter.bodies.rectangle(-60, 52, 16, 54, { label: 'left', chamfer: { radius: [ 0, 8, 8, 0 ] } });
         const rightBumper = this.matter.bodies.rectangle(60, 52, 16, 54, { label: 'right', chamfer: { radius: [ 8, 0, 0, 8 ] } });
@@ -37,8 +38,11 @@ export class Basket
             isStatic: true,
             collisionFilter: {
                 group: collisionGroup
-            }
+            },
+            gameObject: this.basket
         });
+
+        console.log(this.body);
        
         this.syncPositions();
 

@@ -15,7 +15,7 @@ export class Background extends Scene
         bg.setOrigin(0, 0);
         bg.setDisplaySize(ScaleFlow.width, ScaleFlow.height);
 
-        this.ts = this.add.tileSprite(0, 0, ScaleFlow.width, ScaleFlow.height, 'tile');
+        this.ts = this.add.tileSprite(0, 0, ScaleFlow.width, ScaleFlow.height, 'assets', 'tile');
         this.ts.setOrigin(0, 0);
     }
 

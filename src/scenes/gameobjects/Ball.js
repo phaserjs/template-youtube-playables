@@ -8,7 +8,7 @@ export class Ball
         this.matter = scene.matter;
         this.active = false;
 
-        this.ball = this.matter.add.image(-1000, 0, 'ball').setVisible(false);
+        this.ball = this.matter.add.image(-1000, 0, 'assets', 'ball').setVisible(false);
 
         this.ball.name = id.toString();
 
@@ -50,12 +50,19 @@ export class Ball
             this.ball.setAngularVelocity(0.12);
         }
 
-        this.ball.setData('hitTop', false);
-        this.ball.setData('hitBottom', false);
-        this.ball.setData('hitLeft', false);
-        this.ball.setData('hitRight', false);
-        this.ball.setData('scored', false);
-        this.ball.setData('missed', false);
+        this.ball.setData('hitTop1', false);
+        this.ball.setData('hitBottom1', false);
+        this.ball.setData('hitLeft1', false);
+        this.ball.setData('hitRight1', false);
+        this.ball.setData('scored1', false);
+        this.ball.setData('missed1', false);
+
+        this.ball.setData('hitTop2', false);
+        this.ball.setData('hitBottom2', false);
+        this.ball.setData('hitLeft2', false);
+        this.ball.setData('hitRight2', false);
+        this.ball.setData('scored2', false);
+        this.ball.setData('missed2', false);
 
         this.active = true;
     }
