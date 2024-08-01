@@ -105,8 +105,6 @@ export class GameOver extends Scene
 
     selectedBall (ball)
     {
-        console.log('Selected Ball', ball);
-
         this.registry.set('activeBall', `ball${ball}`);
 
         const gameData = {

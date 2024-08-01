@@ -79,8 +79,6 @@ export class UI extends Phaser.Scene
 
     enableAudio ()
     {
-        console.log('Audio Enabled!');
-
         this.sound.setMute(false);
 
         this.audioIcon.setFrame('audio-on');
@@ -88,8 +86,6 @@ export class UI extends Phaser.Scene
 
     disableAudio ()
     {
-        console.log('Audio Disabled!');
-
         this.sound.setMute(true);
 
         this.audioIcon.setFrame('audio-off');
