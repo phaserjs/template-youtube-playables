@@ -20,6 +20,11 @@ export const YouTubePlayables = {
     _language: 'unavailable',
     _data: null,
 
+    /**
+     * 
+     * @param {*} loadedCallback 
+     * @returns 
+     */
     boot: function (loadedCallback)
     {
         const callback = () => {
