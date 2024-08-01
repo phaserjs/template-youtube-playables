@@ -5,7 +5,6 @@ import { Game } from './scenes/Game';
 import { GameBackground } from './scenes/GameBackground';
 import { GameOver } from './scenes/GameOver';
 import { MainMenu } from './scenes/MainMenu';
-import { PhaserGame } from './core/PhaserGame';
 import { Preloader } from './scenes/Preloader';
 import { UI } from './scenes/UI';
 import { YouTubePlayables } from './YouTubePlayables';
@@ -18,12 +17,14 @@ YouTubePlayables.boot(() => {
     //  Find out more information about the Game Config at:
     //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
 
-    new PhaserGame({
+    new Phaser.Game({
         type: Phaser.AUTO,
         width: 820,
         height: 1180,
         parent: 'gameParent',
-        backgroundColor: '#000000',
+        scale: {
+            mode: Phaser.Scale.EXPAND
+        },
         physics: {
             default: 'matter',
             matter: {

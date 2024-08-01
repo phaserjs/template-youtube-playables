@@ -1,5 +1,3 @@
-import { ScaleFlow } from '../../core/ScaleFlow';
-
 export class Basket
 {
     constructor (id, scene, collisionGroup)

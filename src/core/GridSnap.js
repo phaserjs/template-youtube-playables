@@ -1,5 +1,3 @@
-import { ScaleFlow } from './ScaleFlow';
-
 export class GridSnap
 {
     constructor (scene, gridWidth = 3, gridHeight = 3)
@@ -14,7 +12,7 @@ export class GridSnap
 
         this.sprites = new Map();
 
-        scene.sys.game.events.on(ScaleFlow.RESIZE, this.resize, this);
+        scene.scale.on('resize', this.resize, this);
     }
 
     setPadding (x, y)
@@ -79,16 +77,18 @@ export class GridSnap
 
     resize ()
     {
-        const width = ScaleFlow.uiZone.width;
-        const height = ScaleFlow.uiZone.height;
+        const view = this.scene.scale.getViewPort(this.scene.cameras.main);
+
+        const width = view.width;
+        const height = view.height;
 
         const cellWidth = width / this.gridWidth;
         const cellHeight = height / this.gridHeight;
 
         this.sprites.forEach((position, sprite) =>
         {
-            const x = ScaleFlow.uiZone.x + (position.px * this.paddingX) + (position.originX * cellWidth) + Math.floor(position.x * cellWidth);
-            const y = ScaleFlow.uiZone.y + (position.py * this.paddingY) + (position.originY * cellHeight) + Math.floor(position.y * cellHeight);
+            const x = view.x + (position.px * this.paddingX) + (position.originX * cellWidth) + Math.floor(position.x * cellWidth);
+            const y = view.y + (position.py * this.paddingY) + (position.originY * cellHeight) + Math.floor(position.y * cellHeight);
 
             sprite.setPosition(x + position.offsetX, y + position.offsetY);
             sprite.setOrigin(position.originX, position.originY);

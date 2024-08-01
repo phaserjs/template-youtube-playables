@@ -1,4 +1,3 @@
-import { ScaleFlow } from '../core/ScaleFlow';
 import { Scene } from 'phaser';
 
 export class Background extends Scene
@@ -10,12 +9,14 @@ export class Background extends Scene
 
     create ()
     {
+        const view = this.scale.getViewPort(this.cameras.main);
+
         const bg = this.add.image(0, 0, 'background');
 
         bg.setOrigin(0, 0);
-        bg.setDisplaySize(ScaleFlow.width, ScaleFlow.height);
+        bg.setDisplaySize(view.width, view.height);
 
-        this.ts = this.add.tileSprite(0, 0, ScaleFlow.width, ScaleFlow.height, 'assets', 'tile');
+        this.ts = this.add.tileSprite(0, 0, view.width, view.height, 'assets', 'tile');
         this.ts.setOrigin(0, 0);
     }
 

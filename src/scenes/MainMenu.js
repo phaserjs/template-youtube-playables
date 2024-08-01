@@ -1,4 +1,3 @@
-import { ScaleFlow } from '../core/ScaleFlow';
 import { Scene } from 'phaser';
 import { YouTubePlayables } from '../YouTubePlayables';
 
@@ -9,19 +8,12 @@ export class MainMenu extends Scene
         super('MainMenu');
     }
 
-    init ()
-    {
-        ScaleFlow.addCamera(this.cameras.main);
-
-        this.events.on('shutdown', this.shutdown, this);
-    }
-
     create ()
     {
         this.createLogos();
         this.createText();
 
-        this.input.once('pointerdown', () => {
+        this.input.on('pointerdown', (pointer) => {
 
             this.scene.stop('Background');
             this.scene.start('Game');
@@ -44,22 +36,20 @@ export class MainMenu extends Scene
 
     createLogos ()
     {
-        const cx = ScaleFlow.center.x;
-        const cy = ScaleFlow.center.y;
+        const view = this.scale.getViewPort(this.cameras.main);
 
-        const logo = this.add.image(cx, ScaleFlow.getTop() + 260, 'assets', 'game-logo');
+        const logo = this.add.image(view.centerX, 260, 'assets', 'game-logo');
         
         logo.preFX.addShine(0.8, 1, 5);
 
-        this.add.image(cx, cy, 'assets', 'logo');
+        this.add.image(view.centerX, view.centerY, 'assets', 'logo');
 
-        this.add.image(cx, cy + 190, 'assets', 'youtube-logo');
+        this.add.image(view.centerX, view.centerY + 190, 'assets', 'youtube-logo');
     }
 
     async createText ()
     {
-        const cx = ScaleFlow.center.x;
-        const cy = ScaleFlow.getBottom();
+        const view = this.scale.getViewPort(this.cameras.main);
 
         const language = await YouTubePlayables.loadLanguage();
 
@@ -69,15 +59,10 @@ export class MainMenu extends Scene
             `Language: ${language}`
         ];
 
-        this.add.text(cx, cy - 150, info, {
+        this.add.text(view.centerX, view.bottom - 150, info, {
             fontFamily: 'Arial Black', fontSize: 30, color: '#ffffff',
             stroke: '#000000', strokeThickness: 6,
             align: 'center'
         }).setOrigin(0.5);
-    }
-
-    shutdown ()
-    {
-        ScaleFlow.removeCamera(this.cameras.main);
     }
 }

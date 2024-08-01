@@ -1,4 +1,3 @@
-import { ScaleFlow } from '../core/ScaleFlow';
 import { Scene } from 'phaser';
 
 export class GameBackground extends Scene
@@ -10,9 +9,11 @@ export class GameBackground extends Scene
 
     create ()
     {
+        const view = this.scale.getViewPort(this.cameras.main);
+
         const bg = this.add.image(0, 0, 'gameBackground');
 
         bg.setOrigin(0, 0);
-        bg.setDisplaySize(ScaleFlow.width, ScaleFlow.height);
+        bg.setDisplaySize(view.width, view.height);
     }
 }

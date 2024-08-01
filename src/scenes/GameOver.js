@@ -1,4 +1,3 @@
-import { ScaleFlow } from '../core/ScaleFlow';
 import { Scene } from 'phaser';
 import { YouTubePlayables } from '../YouTubePlayables';
 
@@ -7,13 +6,6 @@ export class GameOver extends Scene
     constructor ()
     {
         super('GameOver');
-    }
-
-    init ()
-    {
-        ScaleFlow.addCamera(this.cameras.main);
-
-        this.events.on('shutdown', this.shutdown, this);
     }
 
     create ()
@@ -25,8 +17,10 @@ export class GameOver extends Scene
         //  Bring our UI Scene to the top
         this.scene.bringToTop('UI');
 
-        const cx = ScaleFlow.center.x;
-        const cy = ScaleFlow.center.y;
+        const view = this.scale.getViewPort(this.cameras.main);
+
+        const cx = view.centerX;
+        const cy = view.centerY;
 
         this.add.text(cx, cy - 300, `You scored ${this.registry.get('score')}`, {
             fontFamily: 'Arial Black', fontSize: 64, color: '#ffffff',
@@ -125,10 +119,5 @@ export class GameOver extends Scene
 
         this.scene.stop('GameBackground');
         this.scene.start('MainMenu');
-    }
-
-    shutdown ()
-    {
-        ScaleFlow.removeCamera(this.cameras.main);
     }
 }

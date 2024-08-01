@@ -1,8 +1,6 @@
 import { Ball } from './gameobjects/Ball';
 import { Basket } from './gameobjects/Basket';
-import { ScaleFlow } from '../core/ScaleFlow';
 import { Scene } from 'phaser';
-import { YouTubePlayables } from '../YouTubePlayables';
 
 export class Game extends Scene
 {
@@ -11,20 +9,10 @@ export class Game extends Scene
         super('Game');
     }
 
-    init ()
-    {
-        ScaleFlow.addCamera(this.cameras.main);
-
-        this.events.on('shutdown', this.shutdown, this);
-    }
-
-    //  TODO:
-
-    //  1) Sound FX
-    //  2) Game Data (what?)
-
     create ()
     {
+        this.view = this.scale.getViewPort(this.cameras.main);
+
         this.scene.launch('GameBackground');
         this.scene.bringToTop();
 
@@ -58,9 +46,9 @@ export class Game extends Scene
 
     checkStage ()
     {
-        const left = ScaleFlow.getLeft() + 90;
-        const right = ScaleFlow.getRight() - 90;
-        const top = ScaleFlow.getTop() + 128;
+        const left = this.view.left + 190;
+        const right = this.view.right - 190;
+        const top = this.view.top + 128;
 
         const shots = this.registry.get('shots');
 
@@ -72,20 +60,20 @@ export class Game extends Scene
             case 50:
                 // console.log('Stage 1');
                 basket1.setActive(left, top);
-                basket1.setTweenXBetween(left, right).setXSpeed(5000).setXEase('Linear');
+                basket1.setTweenXBetween(left, right).setXSpeed(6000).setXEase('Linear');
                 basket1.startHorizontalTween();
                 this.sound.play('next-stage');
                 break;
 
             case 45:
                 // console.log('Stage 2');
-                basket1.setEase('Sine.easeInOut').setXSpeed(4000);
+                basket1.setEase('Sine.easeInOut').setXSpeed(5000);
                 this.sound.play('next-stage');
                 break;
 
             case 40:
                 // console.log('Stage 3');
-                basket1.setXSpeed(3000);
+                basket1.setXSpeed(4000);
                 this.sound.play('next-stage');
                 break;
 
@@ -136,7 +124,7 @@ export class Game extends Scene
 
         if (ball && this.registry.get('shots') > 0)
         {
-            const y = (pointer.worldY < ScaleFlow.center.y) ? ScaleFlow.center.y : pointer.worldY;
+            const y = (pointer.worldY < this.view.centerY) ? this.view.centerY : pointer.worldY;
 
             ball.throw(pointer.worldX, y);
 
@@ -150,10 +138,10 @@ export class Game extends Scene
 
     showHand ()
     {
-        const cx = ScaleFlow.center.x;
-        const cy = ScaleFlow.center.y + 200;
-        const x = ScaleFlow.getRight();
-        const y = ScaleFlow.getBottom();
+        const cx = this.view.centerX;
+        const cy = this.view.centerY + 200;
+        const x = this.view.right;
+        const y = this.view.bottom;
 
         this.handCursor = this.add.sprite(x, y, 'hands', 1).setDepth(20).setAlpha(0);
 
@@ -285,14 +273,14 @@ export class Game extends Scene
 
     launchScore (type, netID)
     {
-        const x = ScaleFlow.getRight() + 200;
-        const cy = ScaleFlow.center.y;
+        const x = this.view.right + 200;
+        const cy = this.view.centerY;
 
         const image = this.add.image(x, cy, 'assets', type).setDepth(20);
 
         this.tweens.add({
             targets: image,
-            x: { value: ScaleFlow.getLeft() - 300, duration: 1500, ease: 'sine.inout' },
+            x: { value: this.view.left - 300, duration: 1500, ease: 'sine.inout' },
             alpha: { value: 0, duration: 200, delay: 1000, ease: 'linear' },
             onComplete: () => {
                 image.destroy();
@@ -366,10 +354,5 @@ export class Game extends Scene
                 this.scene.start('GameOver');
             }
         }
-    }
-
-    shutdown ()
-    {
-        ScaleFlow.removeCamera(this.cameras.main);
     }
 }

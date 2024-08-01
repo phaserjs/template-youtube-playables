@@ -1,5 +1,3 @@
-import { ScaleFlow } from '../../core/ScaleFlow';
-
 export class Ball
 {
     constructor (scene, id)
@@ -26,6 +24,8 @@ export class Ball
 
         this.scene.matter.world.remove(this.ball.body);
 
+        this.view = scene.scale.getViewPort(scene.cameras.main);
+
         scene.sys.updateList.add(this);
     }
 
@@ -39,7 +39,7 @@ export class Ball
         this.ball.setVelocityX(0);
         this.ball.setVelocityY(-35);
 
-        if (x < ScaleFlow.center.x)
+        if (x < this.view.centerX)
         {
             this.ball.setAngularVelocity(-0.12);
         }
@@ -67,7 +67,7 @@ export class Ball
 
     preUpdate ()
     {
-        if (this.active && this.ball && this.ball.y > ScaleFlow.getBottom() + 300)
+        if (this.active && this.ball && this.ball.y > this.view.bottom + 300)
         {
             this.active = false;
 
@@ -84,5 +84,4 @@ export class Ball
 
         this.ball.destroy();
     }
-
 }
