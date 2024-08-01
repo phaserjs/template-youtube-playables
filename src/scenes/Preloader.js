@@ -35,11 +35,11 @@ export class Preloader extends Scene
         //  https://opengameart.org/content/85-short-music-jingles
         //  https://opengameart.org/content/magic-sfx-sample
         this.load.setPath('assets/fx');
-        this.load.audio('throw', ['throw.wav','throw.mp3']);
-        this.load.audio('net', ['net.wav','net.mp3']);
-        this.load.audio('ricochet', ['ricochet.wav','ricochet.mp3']);
-        this.load.audio('super-shot', ['super-shot.wav','super-shot.mp3']);
-        this.load.audio('next-stage', ['next-stage.wav','next-stage.mp3']);
+        this.load.audio('throw', [ 'throw.wav', 'throw.mp3' ]);
+        this.load.audio('net', [ 'net.wav',' net.mp3' ]);
+        this.load.audio('ricochet', [ 'ricochet.wav', 'ricochet.mp3' ]);
+        this.load.audio('super-shot', [ 'super-shot.wav', 'super-shot.mp3' ]);
+        this.load.audio('next-stage', [ 'next-stage.wav', 'next-stage.mp3' ]);
     }
 
     create ()
