@@ -72,20 +72,24 @@ export class UI extends Phaser.Scene
         this.ballCount.setText(score.toString());
     }
 
-    enableAudio ()
-    {
-        this.sound.setMute(false);
-
-        this.audioIcon.setFrame('audio-on');
-    }
-
     updateBallIcon (parent, ball)
     {
         this.ballIcon.setFrame(ball);
     }
 
+    enableAudio ()
+    {
+        console.log('Audio Enabled!');
+
+        this.sound.setMute(false);
+
+        this.audioIcon.setFrame('audio-on');
+    }
+
     disableAudio ()
     {
+        console.log('Audio Disabled!');
+
         this.sound.setMute(true);
 
         this.audioIcon.setFrame('audio-off');

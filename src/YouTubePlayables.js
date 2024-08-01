@@ -305,7 +305,7 @@ export const YouTubePlayables = {
 
     isAudioEnabled: function ()
     {
-        return (this.isLoaded() && this._ytgameRef.system.isAudioEnabled()) ?? false;
+        return (this.isLoaded() && this._ytgameRef.system.isAudioEnabled()) ?? true;
     },
 
     setAudioChangeCallback: function (callback)

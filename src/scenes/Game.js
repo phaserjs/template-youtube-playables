@@ -74,17 +74,19 @@ export class Game extends Scene
                 basket1.setActive(left, top);
                 basket1.setTweenXBetween(left, right).setXSpeed(5000).setXEase('Linear');
                 basket1.startHorizontalTween();
+                this.sound.play('next-stage');
                 break;
 
             case 45:
                 // console.log('Stage 2');
                 basket1.setEase('Sine.easeInOut').setXSpeed(4000);
-                // this.pendingGameOver = true;
+                this.sound.play('next-stage');
                 break;
 
             case 40:
                 // console.log('Stage 3');
                 basket1.setXSpeed(3000);
+                this.sound.play('next-stage');
                 break;
 
             case 35:
@@ -92,27 +94,32 @@ export class Game extends Scene
                 basket2.setActive(left, top + 380);
                 basket2.setTweenXBetween(left, right).setXSpeed(5000).setXEase('Sine.easeInOut');
                 basket2.startHorizontalTween();
+                this.sound.play('next-stage');
                 break;
     
             case 25:
                 // console.log('Stage 5');
                 basket1.setTweenYBetween(top, top + 150).setYSpeed(2000).setYEase('Sine.easeInOut');
                 basket1.startVerticalTween();
+                this.sound.play('next-stage');
                 break;
     
             case 20:
                 // console.log('Stage 6');
                 basket2.setXSpeed(4000);
+                this.sound.play('next-stage');
                 break;
     
             case 10:
                 // console.log('Stage 7');
                 basket2.setTweenYBetween(top + 380, top + 480).setYSpeed(2000).setYEase('Sine.easeInOut');
                 basket2.startVerticalTween();
+                this.sound.play('next-stage');
                 break;
         
             case 0:
                 this.pendingGameOver = true;
+                this.sound.play('next-stage');
                 break;
         }
     }
@@ -136,6 +143,8 @@ export class Game extends Scene
             this.registry.inc('shots', -1);
 
             this.checkStage();
+
+            this.sound.play('throw');
         }
     }
 
@@ -322,6 +331,16 @@ export class Game extends Scene
             {
                 this.registry.set('ball6', true);
             }
+
+            this.sound.play('super-shot');
+        }
+        else if (type === 'ricochet')
+        {
+            this.sound.play('ricochet');
+        }
+        else
+        {
+            this.sound.play('net');
         }
     }
 

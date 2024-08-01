@@ -28,6 +28,18 @@ export class Preloader extends Scene
         this.load.image('basket', 'basket.png');
         this.load.atlas('assets', 'basket-shoot-out.png', 'basket-shoot-out.json');
         this.load.spritesheet('hands', 'hands.png', { frameWidth: 190, frameHeight: 300 });
+
+        //  Audio from:
+        //  https://opengameart.org/content/sfxthrow
+        //  https://opengameart.org/content/inventory-sound-effects
+        //  https://opengameart.org/content/85-short-music-jingles
+        //  https://opengameart.org/content/magic-sfx-sample
+        this.load.setPath('assets/fx');
+        this.load.audio('throw', ['throw.wav']);
+        this.load.audio('net', ['net.wav']);
+        this.load.audio('ricochet', ['ricochet.wav']);
+        this.load.audio('super-shot', ['super-shot.wav']);
+        this.load.audio('next-stage', ['next-stage.wav']);
     }
 
     create ()
