@@ -220,7 +220,12 @@ export class Basket
     {
         //  Apply a little force to the bottom middle of the net
 
-        this.matter.body.setVelocity(this.net.bodies[17], { x: 0, y: 20 });
+        const bodies = this.net.bodies;
+
+        this.matter.body.setVelocity(bodies[31], { x: 0, y: 20 });
+        this.matter.body.setVelocity(bodies[23], { x: 0, y: 20 });
+        this.matter.body.setVelocity(bodies[24], { x: 0, y: 20 });
+        this.matter.body.setVelocity(bodies[25], { x: 0, y: 20 });
     }
 
     preUpdate ()

@@ -209,6 +209,61 @@ export const YouTubePlayables = {
         });
     },
 
+    hasLoneSurrogates: function (str)
+    {
+        //  Find lone high surrogates (D800-DBFF) not followed by a low surrogate (DC00-DFFF)
+        const loneHighSurrogate = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])/;
+
+        //  Find lone low surrogates (DC00-DFFF) not preceded by a high surrogate (D800-DBFF)
+        const loneLowSurrogate = /(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/;
+        
+        return loneHighSurrogate.test(str) || loneLowSurrogate.test(str);
+    },
+
+    saveData: function (data)
+    {
+        return new Promise((resolve, reject) =>
+        {
+            if (this.isLoaded())
+            {
+                //  Serialize the object to JSON
+                const jsonString = JSON.stringify(data);
+
+                if (this.hasLoneSurrogates(jsonString))
+                {
+                    console.warn('Lone surrogates found in the JSON string');
+                }
+
+                //  Ensure the JSON string is a valid UTF-16 string by replacing lone surrogates
+                const validUtf16String = jsonString.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])/g, '');
+
+                this._ytgameRef.game.saveData(validUtf16String).then(() => {
+
+                    resolve(data);
+
+                }).catch(error => {
+
+                    console.error('Failed to saveData');
+        
+                    if (error.errorType)
+                    {
+                        this.handleError(error.errorType);
+                    }
+
+                    this.logError();
+
+                    reject(error);
+            
+                });
+            }
+            else
+            {
+                resolve();
+            }
+            
+        });
+    },
+
     getData: function ()
     {
         return this._data;

@@ -34,6 +34,15 @@ export class Boot extends Scene
             //  Or it will be null/undefined if no data was present.
 
             console.log('loadData() result', data);
+
+            this.registry.set('ball1', Phaser.Utils.Objects.GetFastValue(data, 'ball1', true));
+            this.registry.set('ball2', Phaser.Utils.Objects.GetFastValue(data, 'ball2', false));
+            this.registry.set('ball3', Phaser.Utils.Objects.GetFastValue(data, 'ball3', false));
+            this.registry.set('ball4', Phaser.Utils.Objects.GetFastValue(data, 'ball4', false));
+            this.registry.set('ball5', Phaser.Utils.Objects.GetFastValue(data, 'ball5', false));
+            this.registry.set('ball6', Phaser.Utils.Objects.GetFastValue(data, 'ball6', false));
+
+            this.registry.set('activeBall', Phaser.Utils.Objects.GetFastValue(data, 'activeBall', 'ball1'));
         }
         catch (error)
         {

@@ -5,7 +5,7 @@
 			"format": "RGBA8888",
 			"size": {
 				"w": 1024,
-				"h": 767
+				"h": 799
 			},
 			"scale": 1,
 			"frames": [
@@ -136,6 +136,132 @@
 					}
 				},
 				{
+					"filename": "ball6",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 72,
+						"h": 74
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 72,
+						"h": 74
+					},
+					"frame": {
+						"x": 3,
+						"y": 712,
+						"w": 72,
+						"h": 74
+					}
+				},
+				{
+					"filename": "ball-locked",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 72,
+						"h": 74
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 72,
+						"h": 73
+					},
+					"frame": {
+						"x": 79,
+						"y": 712,
+						"w": 72,
+						"h": 73
+					}
+				},
+				{
+					"filename": "ball1",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 72,
+						"h": 74
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 72,
+						"h": 73
+					},
+					"frame": {
+						"x": 155,
+						"y": 712,
+						"w": 72,
+						"h": 73
+					}
+				},
+				{
+					"filename": "ball2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 72,
+						"h": 74
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 72,
+						"h": 73
+					},
+					"frame": {
+						"x": 231,
+						"y": 712,
+						"w": 72,
+						"h": 73
+					}
+				},
+				{
+					"filename": "ball3",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 72,
+						"h": 74
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 72,
+						"h": 73
+					},
+					"frame": {
+						"x": 307,
+						"y": 712,
+						"w": 72,
+						"h": 73
+					}
+				},
+				{
+					"filename": "ball4",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 72,
+						"h": 74
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 72,
+						"h": 73
+					},
+					"frame": {
+						"x": 383,
+						"y": 712,
+						"w": 72,
+						"h": 73
+					}
+				},
+				{
 					"filename": "audio-off",
 					"rotated": false,
 					"trimmed": true,
@@ -150,8 +276,8 @@
 						"h": 52
 					},
 					"frame": {
-						"x": 3,
-						"y": 712,
+						"x": 459,
+						"y": 289,
 						"w": 74,
 						"h": 52
 					}
@@ -171,8 +297,8 @@
 						"h": 52
 					},
 					"frame": {
-						"x": 81,
-						"y": 712,
+						"x": 407,
+						"y": 289,
 						"w": 41,
 						"h": 52
 					}
@@ -192,31 +318,10 @@
 						"h": 105
 					},
 					"frame": {
-						"x": 407,
-						"y": 307,
+						"x": 459,
+						"y": 345,
 						"w": 496,
 						"h": 105
-					}
-				},
-				{
-					"filename": "ball",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 72,
-						"h": 74
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 72,
-						"h": 73
-					},
-					"frame": {
-						"x": 907,
-						"y": 307,
-						"w": 72,
-						"h": 73
 					}
 				},
 				{
@@ -235,7 +340,7 @@
 					},
 					"frame": {
 						"x": 407,
-						"y": 416,
+						"y": 454,
 						"w": 370,
 						"h": 224
 					}
@@ -255,10 +360,31 @@
 						"h": 114
 					},
 					"frame": {
-						"x": 407,
-						"y": 644,
+						"x": 459,
+						"y": 682,
 						"w": 339,
 						"h": 114
+					}
+				},
+				{
+					"filename": "ball5",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 72,
+						"h": 74
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 72,
+						"h": 73
+					},
+					"frame": {
+						"x": 802,
+						"y": 454,
+						"w": 72,
+						"h": 73
 					}
 				}
 			]
@@ -267,6 +393,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:a06c25d1a18fa14861eec6c00e40a803:bcaec69729b465b82dd35c21c521757d:9b6927811ea136424dfa0976d02c9b55$"
+		"smartupdate": "$TexturePacker:SmartUpdate:8fbbe3e4259bd32a1a7580c0f4bb2b6d:08d9e79a10bdb788e8b62f3e94eca63d:9b6927811ea136424dfa0976d02c9b55$"
 	}
 }

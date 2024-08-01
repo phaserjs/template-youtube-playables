@@ -22,7 +22,7 @@ export class UI extends Phaser.Scene
     {
         this.audioIcon = this.add.sprite(0, 0, 'assets', 'audio-off');
 
-        this.ballIcon = this.add.sprite(0, 0, 'assets', 'ball');
+        this.ballIcon = this.add.sprite(0, 0, 'assets', 'ball1');
 
         this.ballCount = this.add.text(0, 0, '50', {
             fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
@@ -64,6 +64,7 @@ export class UI extends Phaser.Scene
         });
 
         this.registry.events.on('changedata-shots', this.updateScore, this);
+        this.registry.events.on('changedata-activeBall', this.updateBallIcon, this);
     }
 
     updateScore (parent, score)
@@ -76,6 +77,11 @@ export class UI extends Phaser.Scene
         this.sound.setMute(false);
 
         this.audioIcon.setFrame('audio-on');
+    }
+
+    updateBallIcon (parent, ball)
+    {
+        this.ballIcon.setFrame(ball);
     }
 
     disableAudio ()

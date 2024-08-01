@@ -48,6 +48,8 @@ export class Preloader extends Scene
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         this.scene.start('MainMenu');
+        // this.scene.start('GameOver');
+        // this.registry.set('score', Phaser.Math.Between(100, 600));
     }
 
     createLoadingBar ()

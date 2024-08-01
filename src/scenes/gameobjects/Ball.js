@@ -8,7 +8,7 @@ export class Ball
         this.matter = scene.matter;
         this.active = false;
 
-        this.ball = this.matter.add.image(-1000, 0, 'assets', 'ball').setVisible(false);
+        this.ball = this.matter.add.image(-1000, 0, 'assets', scene.registry.get('activeBall')).setVisible(false);
 
         this.ball.name = id.toString();
 
@@ -31,8 +31,6 @@ export class Ball
 
     throw (x, y)
     {
-        console.log(`Ball ${this.ball.name} thrown at ${x}, ${y}`);
-
         this.ball.setPosition(x, y);
         this.ball.setVisible(true);
 
@@ -77,8 +75,6 @@ export class Ball
             this.ball.setPosition(-1000, 0);
 
             this.scene.matter.world.remove(this.ball.body);
-
-            console.log(`Ball ${this.ball.name} off-screen`);
         }
     }
 

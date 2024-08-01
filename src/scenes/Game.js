@@ -70,42 +70,43 @@ export class Game extends Scene
         switch (shots)
         {
             case 50:
-                console.log('Stage 1');
+                // console.log('Stage 1');
                 basket1.setActive(left, top);
                 basket1.setTweenXBetween(left, right).setXSpeed(5000).setXEase('Linear');
                 basket1.startHorizontalTween();
                 break;
 
             case 45:
-                console.log('Stage 2');
+                // console.log('Stage 2');
                 basket1.setEase('Sine.easeInOut').setXSpeed(4000);
+                // this.pendingGameOver = true;
                 break;
 
             case 40:
-                console.log('Stage 3');
+                // console.log('Stage 3');
                 basket1.setXSpeed(3000);
                 break;
 
             case 35:
-                console.log('Stage 4');
+                // console.log('Stage 4');
                 basket2.setActive(left, top + 380);
                 basket2.setTweenXBetween(left, right).setXSpeed(5000).setXEase('Sine.easeInOut');
                 basket2.startHorizontalTween();
                 break;
     
             case 25:
-                console.log('Stage 5');
+                // console.log('Stage 5');
                 basket1.setTweenYBetween(top, top + 150).setYSpeed(2000).setYEase('Sine.easeInOut');
                 basket1.startVerticalTween();
                 break;
     
             case 20:
-                console.log('Stage 6');
+                // console.log('Stage 6');
                 basket2.setXSpeed(4000);
                 break;
     
             case 10:
-                console.log('Stage 7');
+                // console.log('Stage 7');
                 basket2.setTweenYBetween(top + 380, top + 480).setYSpeed(2000).setYEase('Sine.easeInOut');
                 basket2.startVerticalTween();
                 break;
@@ -296,6 +297,31 @@ export class Game extends Scene
         else if (netID === 2)
         {
             this.basket2.pullNet();
+        }
+
+        //  Getting a super-shot unlocks ball designs
+        if (type === 'super-shot')
+        {
+            if (!this.registry.get('ball2'))
+            {
+                this.registry.set('ball2', true);
+            }
+            else if (!this.registry.get('ball3'))
+            {
+                this.registry.set('ball3', true);
+            }
+            else if (!this.registry.get('ball4'))
+            {
+                this.registry.set('ball4', true);
+            }
+            else if (!this.registry.get('ball5'))
+            {
+                this.registry.set('ball5', true);
+            }
+            else if (!this.registry.get('ball6'))
+            {
+                this.registry.set('ball6', true);
+            }
         }
     }
 

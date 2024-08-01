@@ -189,7 +189,13 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">ball.png</key>
+            <key type="filename">ball-locked.png</key>
+            <key type="filename">ball1.png</key>
+            <key type="filename">ball2.png</key>
+            <key type="filename">ball3.png</key>
+            <key type="filename">ball4.png</key>
+            <key type="filename">ball5.png</key>
+            <key type="filename">ball6.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -348,7 +354,6 @@
                 <array>
                     <filename>audio-off.png</filename>
                     <filename>audio-on.png</filename>
-                    <filename>ball.png</filename>
                     <filename>game-logo.png</filename>
                     <filename>hoop.png</filename>
                     <filename>logo.png</filename>
@@ -358,6 +363,13 @@
                     <filename>swish.png</filename>
                     <filename>tile.png</filename>
                     <filename>youtube-logo.png</filename>
+                    <filename>ball1.png</filename>
+                    <filename>ball2.png</filename>
+                    <filename>ball3.png</filename>
+                    <filename>ball4.png</filename>
+                    <filename>ball5.png</filename>
+                    <filename>ball6.png</filename>
+                    <filename>ball-locked.png</filename>
                 </array>
             </struct>
         </map>
