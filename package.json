@@ -1,6 +1,6 @@
 {
     "name": "template-youtube-playables",
-    "description": "A Phaser 3 template using Vite for creating YouTube Playables.",
+    "description": "A Phaser 3 template for creating YouTube Playables.",
     "version": "1.0.0",
     "type": "module",
     "repository": {
