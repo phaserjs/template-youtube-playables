@@ -1,5 +1,5 @@
-import { Ball } from './gameobjects/Ball';
-import { Basket } from './gameobjects/Basket';
+import { Ball } from '../gameobjects/Ball';
+import { Basket } from '../gameobjects/Basket';
 import { Scene } from 'phaser';
 
 export class Game extends Scene

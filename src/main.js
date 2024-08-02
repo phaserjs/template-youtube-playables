@@ -1,6 +1,5 @@
 import { Background } from './scenes/Background';
 import { Boot } from './scenes/Boot';
-import { Debug } from './scenes/Debug';
 import { Game } from './scenes/Game';
 import { GameBackground } from './scenes/GameBackground';
 import { GameOver } from './scenes/GameOver';
@@ -38,7 +37,6 @@ YouTubePlayables.boot(() => {
         },
         scene: [
             Boot,
-            Debug,
             Preloader,
             Background,
             MainMenu,

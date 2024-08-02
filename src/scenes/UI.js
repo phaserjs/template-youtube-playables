@@ -1,4 +1,4 @@
-import { GridSnap } from '../core/GridSnap';
+import { GridSnap } from '../GridSnap';
 import Phaser from 'phaser';
 import { YouTubePlayables } from '../YouTubePlayables';
 
