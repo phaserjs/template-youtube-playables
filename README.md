@@ -2,6 +2,8 @@
 
 This is a Phaser 3 project template for creating YouTube Playables that uses Vite for bundling. It supports hot-reloading for quick development workflow and includes scripts to generate production-ready builds.
 
+You will find a comprehensive sample game called **Basketball Shoot Out** in this template. This game demonstrates every available feature of the YouTube Playables SDK and is explained in detail below. To test the game, install the dependencies and `npm run dev` then visit `http://localhost:8080` in your browser. We recommend putting the game into Mobile View mode and picking the iPad Pro for the dimensions. It will work at any scale, but this is the size it was built for and gameplay has been tweaked specifically for it.
+
 ### Versions
 
 This template has been updated for:
@@ -24,11 +26,11 @@ This template has been updated for:
 | `npm run dev` | Launch a development web server |
 | `npm run build` | Create a production build in the `dist` folder |
 
-## YouTube SDK
+## YouTube Playables SDK
 
-https://developers.google.com/youtube/gaming/playables/reference/sdk
+You can access the SDK documentation at https://developers.google.com/youtube/gaming/playables/reference/sdk which is also where you will find the Test Suite, from which you can check all of the SDK calls being made from your game.
 
-## Writing Code
+## Getting Started
 
 After cloning the repo, run `npm install` from your project directory. Then, you can start the local development server by running `npm run dev`.
 
@@ -51,9 +53,9 @@ We have provided a comprehensive sample game to get you started. This is as foll
 - `public/style.css` - Some simple CSS rules to help with page layout.
 - `public/assets` - Contains the static assets used by the game.
 
-## YouTubePlayables Helper Library
+## YouTube Playables Helper Library
 
-We have prepared `YouTubePlayables.js` which is our helper wrapper for the Playables v1 SDK. Although the SDK is nice and easy to use, we found there were some common things we had to repeat doing, such as UTF-16 string checks, or parsing JSON after a loadData call. So, we created this open-source wrapper to help you get up to speed quickly. You can see it used through-out our sample game, but we have also included all of the native SDK calls too, so you can swap between them as needed.
+We have included `YouTubePlayables.js` which is our helper wrapper for the Playables v1 SDK. Although the SDK is nice and easy to use, we found there were some common things we had to repeat doing, such as UTF-16 string checks, or parsing JSON after a loadData call. So, we created this open-source wrapper to help you get up to speed quickly. You can see it used through-out our sample game, but we have also included all of the native SDK calls too, so you can swap between them as needed.
 
 ### Game Boot
 
