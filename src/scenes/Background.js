@@ -11,17 +11,27 @@ export class Background extends Scene
     {
         const view = this.scale.getViewPort(this.cameras.main);
 
-        const bg = this.add.image(0, 0, 'background');
+        this.bg = this.add.image(0, 0, 'background');
 
-        bg.setOrigin(0, 0);
-        bg.setDisplaySize(view.width, view.height);
+        this.bg.setOrigin(0, 0);
+        this.bg.setDisplaySize(view.width, view.height);
 
         this.ts = this.add.tileSprite(0, 0, view.width, view.height, 'assets', 'tile');
         this.ts.setOrigin(0, 0);
+
+        this.scale.on('resize', this.resize, this);
     }
 
     update ()
     {
         this.ts.tilePositionX -= 2;
+    }
+
+    resize ()
+    {
+        const view = this.scale.getViewPort();
+
+        this.bg.setDisplaySize(view.width, view.height);
+        this.ts.setDisplaySize(view.width, view.height);
     }
 }

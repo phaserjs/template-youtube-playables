@@ -23,8 +23,8 @@ export class Basket
         this.netGraphic = scene.add.graphics().setDepth(9);
         this.hoop = scene.add.image(0, 0, 'assets', 'hoop').setOrigin(0.5, 0).setDepth(10);
 
-        const leftBumper = this.matter.bodies.rectangle(-60, 52, 16, 54, { label: 'left', chamfer: { radius: [ 0, 8, 8, 0 ] }, restitution: 0.2 });
-        const rightBumper = this.matter.bodies.rectangle(60, 52, 16, 54, { label: 'right', chamfer: { radius: [ 8, 0, 0, 8 ] }, restitution: 0.2 });
+        const leftBumper = this.matter.bodies.rectangle(-66, 52, 16, 54, { label: 'left', chamfer: { radius: [ 0, 8, 8, 0 ] }, restitution: 0.2 });
+        const rightBumper = this.matter.bodies.rectangle(66, 52, 16, 54, { label: 'right', chamfer: { radius: [ 8, 0, 0, 8 ] }, restitution: 0.2 });
 
         const topSensor = this.matter.bodies.rectangle(0, 0, 128, 32, { isSensor: true, label: 'top' });
         const bottomSensor = this.matter.bodies.rectangle(0, 75, 100, 35, { isSensor: true, label: 'bottom' });

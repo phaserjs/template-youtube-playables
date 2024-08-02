@@ -11,7 +11,6 @@ export class GameOver extends Scene
     create ()
     {
         this.scene.launch('GameBackground');
-
         this.scene.bringToTop();
 
         //  Bring our UI Scene to the top
