@@ -209,6 +209,22 @@ export const YouTubePlayables = {
         });
     },
 
+    logError: function ()
+    {
+        if (this.isLoaded())
+        {
+            this._ytgameRef.health.logError();
+        }
+    },
+
+    logWarning: function ()
+    {
+        if (this.isLoaded())
+        {
+            this._ytgameRef.health.logWarning();
+        }
+    },
+
     hasLoneSurrogates: function (str)
     {
         //  Find lone high surrogates (D800-DBFF) not followed by a low surrogate (DC00-DFFF)
